@@ -1,0 +1,1671 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>1С База Знаний — Учебник программиста</title>
+    <style>
+        :root {
+            --bg: #1a1a1a;
+            --bg-alt: #232323;
+            --bg-code: #141414;
+            --sidebar: #1e1e1e;
+            --border: #333333;
+            --text: #e8e8e8;
+            --text-dim: #8a8a8a;
+            --accent: #FFD400;
+            --accent-hover: #FFE14D;
+            --accent-2: #ffcc00;
+            --green: #7fd962;
+            --red: #ff5555;
+            --purple: #d4a3ff;
+            --header-h: 64px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.7;
+            font-size: 15px;
+        }
+
+        header {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            height: var(--header-h);
+            background: var(--sidebar);
+            border-bottom: 2px solid var(--accent);
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+            z-index: 100;
+            gap: 15px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            white-space: nowrap;
+            text-decoration: none;
+            color: inherit;
+        }
+        .logo-img {
+            width: 40px;
+            height: 40px;
+            object-fit: contain;
+            border-radius: 6px;
+            background: #000;
+            padding: 3px;
+            border: 1px solid #2a2a2a;
+        }
+        .logo-text {
+            display: flex;
+            flex-direction: column;
+            line-height: 1.1;
+        }
+        .logo-text .brand {
+            font-weight: 800;
+            font-size: 15px;
+            color: var(--accent);
+            letter-spacing: .5px;
+        }
+        .logo-text .sub {
+            font-size: 11px;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .search-box {
+            flex: 1;
+            max-width: 500px;
+            position: relative;
+            margin-left: auto;
+        }
+        .search-box input {
+            width: 100%;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 9px 14px 9px 38px;
+            color: var(--text);
+            font-size: 14px;
+            outline: none;
+            transition: border-color .2s;
+        }
+        .search-box input:focus { border-color: var(--accent); box-shadow: 0 0 0 2px rgba(255,212,0,.15); }
+        .search-box::before {
+            content: "";
+            position: absolute;
+            left: 12px; top: 50%;
+            transform: translateY(-50%);
+            width: 14px; height: 14px;
+            background: var(--accent);
+            -webkit-mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path d='M10 2a8 8 0 105.29 14.29l5.29 5.3 1.42-1.42-5.3-5.29A8 8 0 0010 2zm0 2a6 6 0 110 12 6 6 0 010-12z'/></svg>") no-repeat center / contain;
+            mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path d='M10 2a8 8 0 105.29 14.29l5.29 5.3 1.42-1.42-5.3-5.29A8 8 0 0010 2zm0 2a6 6 0 110 12 6 6 0 010-12z'/></svg>") no-repeat center / contain;
+        }
+
+        .menu-btn {
+            background: none;
+            border: 1px solid var(--border);
+            color: var(--accent);
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            display: none;
+        }
+
+        .layout {
+            display: flex;
+            margin-top: var(--header-h);
+            min-height: calc(100vh - var(--header-h));
+        }
+
+        aside {
+            width: 300px;
+            background: var(--sidebar);
+            border-right: 1px solid var(--border);
+            padding: 20px 0;
+            position: fixed;
+            top: var(--header-h);
+            bottom: 0;
+            overflow-y: auto;
+            transition: transform .3s;
+            display: flex;
+            flex-direction: column;
+        }
+        aside::-webkit-scrollbar { width: 8px; }
+        aside::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+        aside::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+
+        .nav-section {
+            padding: 14px 20px 6px;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            color: var(--accent);
+            font-weight: 700;
+            margin-top: 4px;
+            opacity: .85;
+        }
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 8px 20px;
+            color: var(--text);
+            text-decoration: none;
+            font-size: 13.5px;
+            border-left: 3px solid transparent;
+            cursor: pointer;
+            transition: background .15s, border-color .15s;
+        }
+        .nav-link:hover { background: var(--bg-alt); }
+        .nav-link.active {
+            background: var(--bg-alt);
+            border-left-color: var(--accent);
+            color: var(--accent);
+        }
+        .nav-link .num {
+            font-size: 11px;
+            color: var(--text-dim);
+            min-width: 24px;
+            font-family: monospace;
+        }
+        .nav-link.active .num { color: var(--accent); }
+
+        .ico-svg {
+            width: 16px;
+            height: 16px;
+            flex-shrink: 0;
+            color: var(--accent);
+            opacity: .9;
+        }
+        .nav-link:hover .ico-svg,
+        .nav-link.active .ico-svg { opacity: 1; }
+
+        .author-block {
+            margin-top: auto;
+            padding: 18px 20px 22px;
+            border-top: 1px solid var(--border);
+            background: linear-gradient(180deg, transparent, rgba(255,212,0,.05));
+        }
+        .author-title {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            color: var(--accent);
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+        .author-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+            font-size: 13px;
+        }
+        .author-row:last-child { margin-bottom: 0; }
+        .author-row .ico {
+            width: 28px; height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 6px;
+            background: var(--bg-alt);
+            border: 1px solid var(--border);
+            flex-shrink: 0;
+        }
+        .author-row .ico svg { width: 16px; height: 16px; color: var(--accent); }
+        .author-row .txt { color: var(--text); line-height: 1.3; }
+        .author-row .lbl { color: var(--text-dim); font-size: 11px; display: block; }
+        .author-row a {
+            color: var(--accent);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color .15s;
+        }
+        .author-row a:hover { color: var(--accent-hover); text-decoration: underline; }
+
+        main {
+            flex: 1;
+            margin-left: 300px;
+            padding: 40px 55px;
+            max-width: 1050px;
+        }
+
+        .breadcrumbs {
+            font-size: 13px;
+            color: var(--text-dim);
+            margin-bottom: 15px;
+        }
+        .breadcrumbs span { color: var(--accent); }
+
+        h1 {
+            font-size: 32px;
+            margin-bottom: 8px;
+            color: #fff;
+            font-weight: 700;
+        }
+        h1 .accent { color: var(--accent); }
+
+        .subtitle {
+            color: var(--text-dim);
+            margin-bottom: 30px;
+            font-size: 15px;
+        }
+
+        /* Параграфы как в учебнике */
+        .para {
+            margin: 45px 0 25px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--border);
+        }
+        .para-number {
+            display: inline-block;
+            background: var(--accent);
+            color: #000;
+            font-weight: 800;
+            font-size: 13px;
+            padding: 3px 10px;
+            border-radius: 4px;
+            margin-bottom: 10px;
+            letter-spacing: .5px;
+        }
+        .para h2 {
+            font-size: 24px;
+            color: #fff;
+            font-weight: 700;
+            margin: 0;
+            display: inline;
+        }
+
+        h3 {
+            font-size: 18px;
+            margin: 30px 0 12px;
+            color: var(--accent);
+            font-weight: 600;
+            padding-left: 12px;
+            border-left: 3px solid var(--accent);
+        }
+
+        h4 {
+            font-size: 15.5px;
+            margin: 22px 0 10px;
+            color: #fff;
+            font-weight: 600;
+        }
+
+        p { margin-bottom: 14px; }
+
+        .hero {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+            padding: 25px;
+            background: linear-gradient(135deg, #232323 0%, #1a1a1a 100%);
+            border: 1px solid var(--border);
+            border-left: 4px solid var(--accent);
+            border-radius: 12px;
+            margin-bottom: 25px;
+        }
+        .hero-logo {
+            width: 110px;
+            height: 110px;
+            object-fit: contain;
+            border-radius: 10px;
+            background: #000;
+            padding: 8px;
+            border: 1px solid #2a2a2a;
+            flex-shrink: 0;
+        }
+        .hero-text h2 {
+            border: none;
+            margin: 0 0 8px;
+            padding: 0;
+            font-size: 24px;
+            display: block;
+        }
+        .hero-text p {
+            color: var(--text-dim);
+            margin: 0;
+            font-size: 14px;
+        }
+
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .card {
+            background: var(--bg-alt);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 18px;
+            cursor: pointer;
+            transition: transform .15s, border-color .15s, box-shadow .15s;
+            text-decoration: none;
+            color: inherit;
+            display: block;
+            position: relative;
+            overflow: hidden;
+        }
+        .card::before {
+            content: "";
+            position: absolute;
+            top: 0; left: 0;
+            width: 3px; height: 100%;
+            background: var(--accent);
+            transform: scaleY(0);
+            transform-origin: top;
+            transition: transform .2s;
+        }
+        .card:hover {
+            transform: translateY(-3px);
+            border-color: var(--accent);
+            box-shadow: 0 8px 20px rgba(255,212,0,.08);
+        }
+        .card:hover::before { transform: scaleY(1); }
+        .card .card-icon {
+            width: 36px; height: 36px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255,212,0,.08);
+            border-radius: 8px;
+            border: 1px solid rgba(255,212,0,.2);
+        }
+        .card .card-icon svg { width: 20px; height: 20px; color: var(--accent); }
+        .card h4 { font-size: 15px; margin-bottom: 6px; color: #fff; }
+        .card p { font-size: 13px; color: var(--text-dim); margin: 0; }
+
+        /* Учебная навигация */
+        .toc {
+            background: var(--bg-alt);
+            border: 1px solid var(--border);
+            border-left: 3px solid var(--accent);
+            border-radius: 8px;
+            padding: 18px 22px;
+            margin: 20px 0;
+        }
+        .toc h4 { margin-top: 0; color: var(--accent); }
+        .toc ol { margin: 8px 0; padding-left: 20px; }
+        .toc li { margin-bottom: 4px; font-size: 14px; }
+
+        pre {
+            background: var(--bg-code);
+            border: 1px solid var(--border);
+            border-left: 3px solid var(--accent);
+            border-radius: 8px;
+            padding: 16px 18px;
+            overflow-x: auto;
+            margin: 15px 0;
+            font-family: "JetBrains Mono", "Fira Code", Consolas, monospace;
+            font-size: 13px;
+            line-height: 1.6;
+            position: relative;
+        }
+        code {
+            font-family: "JetBrains Mono", "Fira Code", Consolas, monospace;
+            font-size: 13px;
+            background: var(--bg-code);
+            padding: 2px 6px;
+            border-radius: 4px;
+            color: var(--accent);
+        }
+        pre code { background: none; padding: 0; color: var(--text); }
+
+        .kw { color: #ffd866; font-weight: 500; }
+        .str { color: #a8e07a; }
+        .num { color: #ffb454; }
+        .cmt { color: #5a6673; font-style: italic; }
+        .fn { color: #7cc7ff; }
+
+        .copy-btn {
+            position: absolute;
+            top: 8px; right: 8px;
+            background: var(--bg-alt);
+            border: 1px solid var(--border);
+            color: var(--text-dim);
+            padding: 4px 10px;
+            border-radius: 5px;
+            font-size: 11px;
+            cursor: pointer;
+            opacity: 0;
+            transition: opacity .2s, color .2s, border-color .2s;
+        }
+        pre:hover .copy-btn { opacity: 1; }
+        .copy-btn:hover { color: var(--accent); border-color: var(--accent); }
+
+        .callout {
+            border-radius: 8px;
+            padding: 14px 18px;
+            margin: 18px 0;
+            border-left: 4px solid;
+            background: var(--bg-alt);
+            font-size: 14px;
+        }
+        .callout.info { border-color: var(--accent); }
+        .callout.warn { border-color: var(--accent-2); }
+        .callout.tip { border-color: var(--green); }
+        .callout.danger { border-color: var(--red); }
+        .callout strong { color: #fff; }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 18px 0;
+            font-size: 14px;
+        }
+        th, td {
+            text-align: left;
+            padding: 10px 14px;
+            border: 1px solid var(--border);
+        }
+        th {
+            background: var(--bg-alt);
+            color: var(--accent);
+            font-weight: 700;
+        }
+        tr:nth-child(even) td { background: rgba(255,255,255,.02); }
+
+        .search-results {
+            display: none;
+            background: var(--bg-alt);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            max-height: 420px;
+            overflow-y: auto;
+            position: absolute;
+            top: 45px;
+            width: 100%;
+            z-index: 200;
+            box-shadow: 0 10px 30px rgba(0,0,0,.5);
+        }
+        .search-results.active { display: block; }
+        .search-result-item {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border);
+            cursor: pointer;
+        }
+        .search-result-item:hover { background: var(--bg); }
+        .search-result-item:last-child { border-bottom: none; }
+        .search-result-item .title { color: var(--accent); font-weight: 500; margin-bottom: 3px; }
+        .search-result-item .desc { font-size: 12px; color: var(--text-dim); }
+
+        .page { display: none; }
+        .page.active { display: block; animation: fadeIn .3s; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+
+        footer {
+            margin-left: 300px;
+            padding: 25px 55px;
+            border-top: 2px solid var(--accent);
+            color: var(--text-dim);
+            font-size: 13px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            background: var(--sidebar);
+        }
+        footer .foot-left { display: flex; align-items: center; gap: 8px; }
+        footer .foot-right { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+        footer a { color: var(--accent); text-decoration: none; transition: color .15s; }
+        footer a:hover { color: var(--accent-hover); text-decoration: underline; }
+
+        @media (max-width: 900px) {
+            aside { transform: translateX(-100%); width: 300px; }
+            aside.open { transform: translateX(0); }
+            main { margin-left: 0; padding: 25px 20px; }
+            footer { margin-left: 0; padding: 20px; flex-direction: column; text-align: center; }
+            .menu-btn { display: block; }
+            .logo-text .sub { display: none; }
+            h1 { font-size: 24px; }
+            .hero { flex-direction: column; text-align: center; }
+            .hero-logo { width: 90px; height: 90px; }
+        }
+
+        kbd {
+            background: var(--bg-code);
+            border: 1px solid var(--border);
+            border-bottom-width: 2px;
+            border-radius: 4px;
+            padding: 1px 6px;
+            font-size: 12px;
+            font-family: monospace;
+            color: var(--accent);
+        }
+
+        ul, ol { padding-left: 25px; margin: 12px 0; }
+        li { margin-bottom: 6px; }
+        li::marker { color: var(--accent); }
+
+        .badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 700;
+            background: var(--accent);
+            color: #000;
+            margin-left: 8px;
+            vertical-align: middle;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <button class="menu-btn" onclick="toggleSidebar()">☰</button>
+
+    <a href="#home" class="logo" onclick="showPage('home'); return false;">
+        <img src="logo.png" alt="ART" class="logo-img" onerror="this.style.display='none'">
+        <div class="logo-text">
+            <span class="brand">1С База Знаний</span>
+            <span class="sub">ART · Учебник</span>
+        </div>
+    </a>
+
+    <div class="search-box">
+        <input type="text" id="searchInput" placeholder="Поиск по учебнику..." autocomplete="off">
+        <div class="search-results" id="searchResults"></div>
+    </div>
+</header>
+
+<div class="layout">
+    <aside id="sidebar">
+        <div class="nav-section">Введение</div>
+        <a class="nav-link active" data-page="home"><span class="num">§0</span> Главная</a>
+        <a class="nav-link" data-page="basics"><span class="num">§1</span> Основы платформы</a>
+
+        <div class="nav-section">Часть I. Язык</div>
+        <a class="nav-link" data-page="syntax"><span class="num">§2</span> Синтаксис</a>
+        <a class="nav-link" data-page="types"><span class="num">§3</span> Типы данных</a>
+        <a class="nav-link" data-page="collections"><span class="num">§4</span> Коллекции</a>
+        <a class="nav-link" data-page="functions"><span class="num">§5</span> Процедуры и функции</a>
+
+        <div class="nav-section">Часть II. Данные</div>
+        <a class="nav-link" data-page="queries"><span class="num">§6</span> Язык запросов</a>
+        <a class="nav-link" data-page="sql"><span class="num">§7</span> SQL и СУБД</a>
+        <a class="nav-link" data-page="transactions"><span class="num">§8</span> Транзакции</a>
+
+        <div class="nav-section">Часть III. Интерфейс</div>
+        <a class="nav-link" data-page="forms"><span class="num">§9</span> Управляемые формы</a>
+        <a class="nav-link" data-page="formevents"><span class="num">§10</span> События форм</a>
+        <a class="nav-link" data-page="reports"><span class="num">§11</span> Отчёты и СКД</a>
+
+        <div class="nav-section">Часть IV. Архитектура</div>
+        <a class="nav-link" data-page="extensions"><span class="num">§12</span> Расширения</a>
+        <a class="nav-link" data-page="patterns"><span class="num">§13</span> Паттерны</a>
+        <a class="nav-link" data-page="optimization"><span class="num">§14</span> Оптимизация</a>
+
+        <div class="nav-section">Практикум</div>
+        <a class="nav-link" data-page="snippets"><span class="num">§15</span> Сниппеты</a>
+        <a class="nav-link" data-page="glossary"><span class="num">§16</span> Глоссарий</a>
+
+        <div class="author-block">
+            <div class="author-title">Об авторе</div>
+            <div class="author-row">
+                <div class="ico">
+                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 .3a12 12 0 00-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.6-1.4-1.4-1.8-1.4-1.8-1-.7.1-.7.1-.7 1.2.1 1.9 1.2 1.9 1.2 1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.7-1.6-2.7-.3-5.5-1.3-5.5-6 0-1.3.5-2.4 1.2-3.2 0-.4-.5-1.6.2-3.3 0 0 1-.3 3.3 1.2a11.5 11.5 0 016 0c2.3-1.5 3.3-1.2 3.3-1.2.7 1.7.2 2.9.1 3.3.8.8 1.2 1.9 1.2 3.2 0 4.7-2.8 5.7-5.5 6 .4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0012 .3z"/></svg>
+                </div>
+                <div class="txt">
+                    <span class="lbl">GitHub</span>
+                    <a href="https://github.com/OBLADAET-ru" target="_blank" rel="noopener">OBLADAET-ru</a>
+                </div>
+            </div>
+            <div class="author-row">
+                <div class="ico">
+                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 12a5 5 0 100-10 5 5 0 000 10zm0 2c-4.4 0-8 2.7-8 6v2h16v-2c0-3.3-3.6-6-8-6z"/></svg>
+                </div>
+                <div class="txt">
+                    <span class="lbl">Создатель</span>
+                    Платонов Виктор А.
+                </div>
+            </div>
+        </div>
+
+    </aside>
+
+    <main>
+
+        <!-- ГЛАВНАЯ -->
+        <section class="page active" id="home">
+            <div class="breadcrumbs">Главная</div>
+
+            <div class="hero">
+                <img src="logo.png" alt="ART" class="hero-logo" onerror="this.style.display='none'">
+                <div class="hero-text">
+                    <h2>1С <span style="color:var(--accent)">База знаний</span></h2>
+                    <p>Полный учебник для программистов 1С:Предприятие 8.3+. Проект <strong style="color:var(--accent)">ART</strong>.</p>
+                </div>
+            </div>
+
+            <div class="callout info">
+                <strong>💡 О учебнике:</strong> Материал организован по принципу классического учебника — 16 параграфов, разбитых на 5 частей. Каждый параграф содержит теорию, примеры кода и практические рекомендации.
+            </div>
+
+            <div class="para">
+                <div class="para-number">ОГЛАВЛЕНИЕ</div>
+                <h2>Структура учебника</h2>
+            </div>
+
+            <div class="toc">
+                <h4>Введение</h4>
+                <ol>
+                    <li>Основы платформы 1С:Предприятие</li>
+                </ol>
+                <h4>Часть I. Язык программирования</h4>
+                <ol start="2">
+                    <li>Синтаксис встроенного языка</li>
+                    <li>Типы данных</li>
+                    <li>Коллекции значений</li>
+                    <li>Процедуры и функции</li>
+                </ol>
+                <h4>Часть II. Работа с данными</h4>
+                <ol start="6">
+                    <li>Язык запросов</li>
+                    <li>SQL и взаимодействие с СУБД</li>
+                    <li>Транзакции и блокировки</li>
+                </ol>
+                <h4>Часть III. Интерфейс пользователя</h4>
+                <ol start="9">
+                    <li>Управляемые формы</li>
+                    <li>События и обработчики форм</li>
+                    <li>Отчёты и система компоновки данных</li>
+                </ol>
+                <h4>Часть IV. Архитектура и практика</h4>
+                <ol start="12">
+                    <li>Расширения конфигурации</li>
+                    <li>Паттерны разработки</li>
+                    <li>Оптимизация производительности</li>
+                </ol>
+                <h4>Практикум</h4>
+                <ol start="15">
+                    <li>Сниппеты и типовые приёмы</li>
+                    <li>Глоссарий</li>
+                </ol>
+            </div>
+
+            <div class="callout tip">
+                <strong>💚 Рекомендация:</strong> Начинающим стоит изучать параграфы последовательно. Опытные разработчики могут использовать поиск или переходить к нужному разделу через навигацию.
+            </div>
+        </section>
+
+        <!-- §1 ОСНОВЫ -->
+        <section class="page" id="basics">
+            <div class="breadcrumbs">Главная / <span>§1 Основы платформы</span></div>
+            <h1>§1. Основы платформы <span class="accent">1С:Предприятие</span></h1>
+            <p class="subtitle">Архитектура, режимы работы и ключевые понятия</p>
+
+            <div class="para">
+                <div class="para-number">1.1</div>
+                <h2>Что такое 1С:Предприятие</h2>
+            </div>
+            <p><strong>1С:Предприятие 8</strong> — это технологическая платформа для создания прикладных решений (конфигураций) в области автоматизации бизнеса. Платформа предоставляет разработчику объектную модель, встроенный язык программирования и среду исполнения.</p>
+            <p>Прикладное решение (конфигурация) — это совокупность объектов метаданных, код на встроенном языке и интерфейс, которые описывают конкретную предметную область (бухгалтерия, торговля, склад и т.д.).</p>
+
+            <div class="callout info">
+                <strong>ℹ️ Важно:</strong> Разработчик работает с <em>метаданными</em>, а платформа автоматически генерирует физические структуры базы данных. Вы не создаёте таблицы вручную — вы описываете объекты, а платформа делает всё остальное.
+            </div>
+
+            <div class="para">
+                <div class="para-number">1.2</div>
+                <h2>Режимы работы</h2>
+            </div>
+            <p>Платформа имеет два основных режима работы:</p>
+            <table>
+                <tr><th>Режим</th><th>Назначение</th><th>Для кого</th></tr>
+                <tr><td><strong>Конфигуратор</strong></td><td>Среда разработки: создание объектов, написание кода, отладка, реструктуризация БД</td><td>Разработчик</td></tr>
+                <tr><td><strong>Предприятие</strong></td><td>Пользовательский режим: ввод документов, формирование отчётов</td><td>Конечный пользователь</td></tr>
+            </table>
+
+            <div class="para">
+                <div class="para-number">1.3</div>
+                <h2>Ключевые объекты конфигурации</h2>
+            </div>
+            <p>Основные объекты метаданных, с которыми работает разработчик:</p>
+            <table>
+                <tr><th>Объект</th><th>Назначение</th><th>Пример</th></tr>
+                <tr><td><strong>Справочник</strong></td><td>Условно-постоянная информация</td><td>Номенклатура, Контрагенты, Сотрудники</td></tr>
+                <tr><td><strong>Документ</strong></td><td>Регистрация фактов деятельности</td><td>РеализацияТоваров, ПоступлениеТоваров</td></tr>
+                <tr><td><strong>Регистр сведений</strong></td><td>Данные в разрезе измерений</td><td>ЦеныНоменклатуры, КурсыВалют</td></tr>
+                <tr><td><strong>Регистр накопления</strong></td><td>Учёт движений (остатки, обороты)</td><td>ТоварыНаСкладах, Взаиморасчёты</td></tr>
+                <tr><td><strong>Отчёт</strong></td><td>Аналитическая информация</td><td>ОстаткиТоваров, ПродажиЗаПериод</td></tr>
+                <tr><td><strong>Обработка</strong></td><td>Сервисные операции</td><td>ЗагрузкаДанных, ГрупповаяОбработка</td></tr>
+                <tr><td><strong>Общий модуль</strong></td><td>Библиотека процедур и функций</td><td>ОбщегоНазначения, РаботаСФайлами</td></tr>
+            </table>
+
+            <div class="para">
+                <div class="para-number">1.4</div>
+                <h2>Программные модули</h2>
+            </div>
+            <p>Код на встроенном языке размещается в <strong>программных модулях</strong>. Контекст выполнения модуля определяет доступные свойства и методы.</p>
+            <ul>
+                <li><strong>Глобальный контекст</strong> — доступен из любого модуля: общие функции платформы (Сообщить, ТекущаяДата, Новый).</li>
+                <li><strong>Локальный контекст</strong> — свойства и методы конкретного объекта (реквизиты формы, модуль документа).</li>
+            </ul>
+            <p>Виды модулей:</p>
+            <ul>
+                <li>Модуль приложения</li>
+                <li>Модуль сеанса</li>
+                <li>Общие модули (глобальные и неглобальные)</li>
+                <li>Модули объектов (справочников, документов)</li>
+                <li>Модули менеджеров</li>
+                <li>Модули форм</li>
+                <li>Модули команд</li>
+            </ul>
+
+            <div class="callout tip">
+                <strong>💡 Совет:</strong> Размещайте общие процедуры и функции в общих модулях. Это улучшает читаемость кода и позволяет переиспользовать логику в разных объектах.
+            </div>
+        </section>
+
+        <!-- §2 СИНТАКСИС -->
+        <section class="page" id="syntax">
+            <div class="breadcrumbs">Главная / <span>§2 Синтаксис</span></div>
+            <h1>§2. Синтаксис встроенного языка</h1>
+            <p class="subtitle">Базовые конструкции языка 1С</p>
+
+            <div class="para">
+                <div class="para-number">2.1</div>
+                <h2>Переменные и операторы</h2>
+            </div>
+            <p>Переменные в 1С имеют <strong>мягкую типизацию</strong>: тип определяется значением, которое присвоено переменной. Объявление переменной необязательно, но рекомендуется для ясности кода.</p>
+            <pre><code><span class="cmt">// Объявление переменных</span>
+<span class="kw">Перем</span> ИмяПеременной;
+<span class="kw">Перем</span> Счетчик, Сумма, Результат;
+
+<span class="cmt">// Присваивание значений</span>
+Сумма = <span class="num">100</span>;
+Строка = <span class="str">"Привет, 1С!"</span>;
+МодульЧисла = -<span class="num">5</span>; <span class="cmt">// Унарный минус</span></code><button class="copy-btn" onclick="copyCode(this)">Копировать</button></pre>
+
+            <div class="para">
+                <div class="para-number">2.2</div>
+                <h2>Арифметические операции</h2>
+            </div>
+            <table>
+                <tr><th>Операция</th><th>Синтаксис</th><th>Пример</th></tr>
+                <tr><td>Сложение</td><td><code>a + b</code></td><td><code>5 + 3 = 8</code></td></tr>
+                <tr><td>Вычитание</td><td><code>a - b</code></td><td><code>5 - 3 = 2</code></td></tr>
+                <tr><td>Умножение</td><td><code>a * b</code></td><td><code>5 * 3 = 15</code></td></tr>
+                <tr><td>Деление</td><td><code>a / b</code></td><td><code>10 / 2 = 5</code></td></tr>
+                <tr><td>Остаток от деления</td><td><code>a % b</code></td><td><code>10 % 3 = 1</code></td></tr>
+            </table>
+
+            <div class="para">
+                <div class="para-number">2.3</div>
+                <h2>Логические операции</h2>
+            </div>
+            <p>Логические операции применяются к значениям типа Булево (Истина/Ложь):</p>
+            <table>
+                <tr><th>Операция</th><th>Синтаксис</th><th>Описание</th></tr>
+                <tr><td>Отрицание</td><td><code>НЕ</code></td><td>Инверсия значения</td></tr>
+                <tr><td>Конъюнкция</td><td><code>И</code></td><td>Логическое И</td></tr>
+                <tr><td>Дизъюнкция</td><td><code>ИЛИ</code></td><td>Логическое ИЛИ</td></tr>
+            </table>
+
+            <div class="para">
+                <div class="para-number">2.4</div>
+                <h2>Условные операторы</h2>
+            </div>
+            <pre><code><span class="kw">Если</span> Сумма > <span class="num">1000</span> <span class="kw">Тогда</span>
+    Сообщить(<span class="str">"Большая сумма"</span>);
+<span class="kw">ИначеЕсли</span> Сумма > <span class="num">100</span> <span class="kw">Тогда</span>
+    Сообщить(<span class="str">"Средняя сумма"</span>);
+<span class="kw">Иначе</span>
+    Сообщить(<span class="str">"Малая сумма"</span>);
+<span class="kw">КонецЕсли</span>;</code><button class="copy-btn" onclick="copyCode(this)">Копировать</button></pre>
+
+            <div class="para">
+                <div class="para-number">2.5</div>
+                <h2>Циклы</h2>
+            </div>
+            <h3>Цикл Для</h3>
+            <pre><code><span class="kw">Для</span> Сч = <span class="num">1</span> <span class="kw">По</span> <span class="num">10</span> <span class="kw">Цикл</span>
+    Сообщить(Сч);
+<span class="kw">КонецЦикла</span>;</code><button class="copy-btn" onclick="copyCode(this)">Копировать</button></pre>
+
+            <h3>Цикл Для Каждого</h3>
+            <pre><code><span class="kw">Для Каждого</span> Элемент <span class="kw">Из</span> Массив <span class="kw">Цикл</span>
+    Сообщить(Элемент);
+<span class="kw">КонецЦикла</span>;</code><button class="copy-btn" onclick="copyCode(this)">Копировать</button></pre>
+
+            <h3>Цикл Пока</h3>
+            <pre><code>Счетчик = <span class="num">0</span>;
+<span class="kw">Пока</span> Счетчик < <span class="num">10</span> <span class="kw">Цикл</span>
+    Счетчик = Счетчик + <span class="num">1</span>;
+<span class="kw">КонецЦикла</span>;</code><button class="copy-btn" onclick="copyCode(this)">Копировать</button></pre>
+
+            <div class="callout warn">
+                <strong>⚠️ Важно:</strong> В 1С нет оператора <code>break</code> или <code>continue</code>. Для досрочного выхода из цикла используется условие в заголовке или флаг.
+            </div>
+        </section>
+
+        <!-- §3 ТИПЫ ДАННЫХ -->
+        <section class="page" id="types">
+            <div class="breadcrumbs">Главная / <span>§3 Типы данных</span></div>
+            <h1>§3. Типы данных в <span class="accent">1С</span></h1>
+            <p class="subtitle">Примитивные и ссылочные типы</p>
+
+            <div class="para">
+                <div class="para-number">3.1</div>
+                <h2>Базовые типы</h2>
+            </div>
+            <table>
+                <tr><th>Тип</th><th>Пример</th><th>Описание</th></tr>
+                <tr><td><strong>Строка</strong></td><td><code>"Текст"</code></td><td>Строка в Unicode, возможны многострочные</td></tr>
+                <tr><td><strong>Число</strong></td><td><code>123.45</code></td><td>Число с фиксированной точностью</td></tr>
+                <tr><td><strong>Дата</strong></td><td><code>'20240101'</code></td><td>Дата и время</td></tr>
+                <tr><td><strong>Булево</strong></td><td><code>Истина</code> / <code>Ложь</code></td><td>Логический тип</td></tr>
+            </table>
+
+            <div class="para">
+                <div class="para-number">3.2</div>
+                <h2>Специальные типы</h2>
+            </div>
+            <table>
+                <tr><th>Тип</th><th>Описание</th></tr>
+                <tr><td><strong>Неопределено</strong></td><td>Пустое значение с незаданным типом</td></tr>
+                <tr><td><strong>Null</strong></td><td>Пустое значение из базы данных (только в запросах)</td></tr>
+                <tr><td><strong>Тип</strong></td><td>Используется для определения и сравнения типов</td></tr>
+            </table>
+
+            <div class="para">
+                <div class="para-number">3.3</div>
+                <h2>Работа с типами</h2>
+            </div>
+            <pre><code><span class="cmt">// Получение типа значения</span>
+ТипЗначения = ТипЗнч(Ссылка);
+<span class="kw">Если</span> ТипЗначения = Тип(<span class="str">"СправочникСсылка.Номенклатура"</span>) <span class="kw">Тогда</span>
+    <span class="cmt">// Обработка номенклатуры</span>
+<span class="kw">КонецЕсли</span>;
+
+<span class="cmt">// Проверка заполнения</span>
+<span class="kw">Если</span> ЗначениеЗаполнено(Ссылка) <span class="kw">Тогда</span>
+    Сообщить(Ссылка.Наименование);
+<span class="kw">КонецЕсли</span>;</code><button class="copy-btn" onclick="copyCode(this)">Копировать</button></pre>
+
+            <div class="para">
+                <div class="para-number">3.4</div>
+                <h2>Операции над датами</h2>
+            </div>
+            <pre><code><span class="cmt">// Сложение даты с числом (число = секунды)</span>
+НоваяДата = ТекущаяДата() + <span class="num">3600</span>; <span class="cmt">// +1 час</span>
+
+<span class="cmt">// Функции работы с датами</span>
+НачалоДня = НачалоДня(ТекущаяДата());
+КонецМесяца = КонецМесяца(ТекущаяДата());
+Разница = РазностьДат(Дата1, Дата2, <span class="str">"День"</span>);</code><button class="copy-btn" onclick="copyCode(this)">Копировать</button></pre>
+        </section>
+
+        <!-- §4 КОЛЛЕКЦИИ -->
+        <section class="page" id="collections">
+            <div class="breadcrumbs">Главная / <span>§4 Коллекции</span></div>
+            <h1>§4. Коллекции значений</h1>
+            <p class="subtitle">Массивы, структуры, соответствия и таблицы</p>
+
+            <div class="para">
+                <div class="para-number">4.1</div>
+                <h2>Массив</h2>
+            </div>
+            <p>Упорядоченный набор значений. Ключом всегда является индекс (число).</p>
+            <pre><code>Массив = <span class="kw">Новый</span> Массив;
+Массив.Добавить(<span class="num">10</span>);
+Массив.Добавить(<span class="str">"текст"</span>);
+Массив.Добавить(Истина); <span class="cmt">// Разные типы — норма</span>
+
+Размер = Массив.Количество();
+
+<span class="kw">Для Каждого</span> Элемент <span class="kw">Из</span> Массив <span class="kw">Цикл</span>
+    Сообщить(Элемент);
+<span class="kw">КонецЦикла</span>;</code><button class="copy-btn" onclick="copyCode(this)">Копировать</button></pre>
+
+            <div class="para">
+                <div class="para-number">4.2</div>
+                <h2>Структура</h2>
+            </div>
+            <p>Набор значений с доступом по имени (ключу). Ключом может быть любой тип.</p>
+            <pre><code>Структура = <span class="kw">Новый</span> Структура;
+Структура.Вставить(<span class="str">"Имя"</span>, <span class="str">"Иван"</span>);
+Структура.Вставить(<span class="str">"Возраст"</span>, <span class="num">30</span>);
+
+Сообщить(Структура.Имя);
+Сообщить(Структура[<span class="str">"Возраст"</span>]);
+
+<span class="kw">Если</span> Структура.Свойство(<span class="str">"Имя"</span>) <span class="kw">Тогда</span>
+    <span class="cmt">// ...</span>
+<span class="kw">КонецЕсли</span>;</code><button class="copy-btn" onclick="copyCode(this)">Копировать</button></pre>
+
+            <div class="para">
+                <div class="para-number">4.3</div>
+                <h2>Соответствие</h2>
+            </div>
+            <p>Похоже на структуру, но ключом может быть строка с пробелами и любой другой тип.</p>
+            <pre><code>Соответствие = <span class="kw">Новый</span> Соответствие;
+Соответствие.Вставить(<span class="str">"Ключ1"</span>, <span class="num">100</span>);
+Соответствие.Вставить(<span class="str">"Ключ2"</span>, <span class="num">200</span>);
+
+Значение = Соответствие[<span class="str">"Ключ1"</span>]; <span class="cmt">// 100</span></code><button class="copy-btn" onclick="copyCode(this)">Копировать</button></pre>
+
+            <div class="para">
+                <div class="para-number">4.4</div>
+                <h2>Таблица значений</h2>
+            </div>
+            <p>Двумерная таблица с колонками и строками. Колонки имеют имена и типы.</p>
+            <pre><code>ТЗ = <span class="kw">Новый</span> ТаблицаЗначений;
+ТЗ.Колонки.Добавить(<span class="str">"Наименование"</span>);
+ТЗ.Колонки.Добавить(<span class="str">"Количество"</span>, <span class="kw">Новый</span> ОписаниеТипов(<span class="str">"Число"</span>));
+
+Строка = ТЗ.Добавить();
+Строка.Наименование = <span class="str">"Товар 1"</span>;
+Строка.Количество = <span class="num">5</span>;
+
+<span class="cmt">// Сортировка</span>
+ТЗ.Сортировать(<span class="str">"Количество УБЫВ"</span>);
+
+<span class="cmt">// Свернуть (аналог GROUP BY)</span>
+ТЗ.Свернуть(<span class="str">"Наименование"</span>, <span class="str">"Количество"</span>);</code><button class="copy-btn" onclick="copyCode(this)">Копировать</button></pre>
+
+            <div class="callout tip">
+                <strong>💡 Совет:</strong> Для возврата нескольких значений из функции часто используют Структуру. Для табличных данных — ТаблицуЗначений.
+            </div>
+        </section>
+
+        <!-- §5 ФУНКЦИИ -->
+        <section class="page" id="functions">
+            <div class="breadcrumbs">Главная / <span>§5 Процедуры и функции</span></div>
+            <h1>§5. Процедуры и функции</h1>
+            <p class="subtitle">Структура и особенности</p>
+
+            <div class="para">
+                <div class="para-number">5.1</div>
+                <h2>Процедуры</h2>
+            </div>
+            <p><strong>Процедура</strong> — именованный блок кода, который выполняет действие, но не возвращает значение.</p>
+            <pre><code><span class="kw">Процедура</span> <span class="fn">Приветствие</span>(Имя)
+    Сообщить(<span class="str">"Привет, "</span> + Имя);
+<span class="kw">КонецПроцедуры</span>
+
+<span class="cmt">// Вызов</span>
+Приветствие(<span class="str">"Мир"</span>);</code><button class="copy-btn" onclick="copyCode(this)">Копировать</button></pre>
+
+            <div class="para">
+                <div class="para-number">5.2</div>
+                <h2>Функции</h2>
+            </div>
+            <p><strong>Функция</strong> — блок кода, который возвращает значение через оператор <code>Возврат</code>.</p>
+            <pre><code><span class="kw">Функция</span> <span class="fn">Сложить</span>(А, Б)
+    <span class="kw">Возврат</span> А + Б;
+<span class="kw">КонецФункции</span>
+
+Результат = Сложить(<span class="num">5</span>, <span class="num">3</span>); <span class="cmt">// 8</span></code><button class="copy-btn" onclick="copyCode(this)">Копировать</button></pre>
+
+            <div class="para">
+                <div class="para-number">5.3</div>
+                <h2>Экспортные процедуры и функции</h2>
+            </div>
+            <p>Ключевое слово <code>Экспорт</code> делает процедуру или функцию доступной из других модулей.</p>
+            <pre><code><span class="kw">Функция</span> <span class="fn">ПолучитьКурсВалюты</span>(Валюта, Дата) <span class="kw">Экспорт</span>
+    <span class="cmt">// Логика получения курса</span>
+    <span class="kw">Возврат</span> Курс;
+<span class="kw">КонецФункции</span></code><button class="copy-btn" onclick="copyCode(this)">Копировать</button></pre>
+
+            <div class="para">
+                <div class="para-number">5.4</div>
+                <h2>Параметры по умолчанию</h2>
+            </div>
+            <pre><code><span class="kw">Функция</span> <span class="fn">РассчитатьСкидку</span>(Сумма, Процент = <span class="num">5</span>)
+    <span class="kw">Возврат</span> Сумма * Процент / <span class="num">100</span>;
+<span class="kw">КонецФункции</span>
+
+Скидка = РассчитатьСкидку(<span class="num">1000</span>);      <span class="cmt">// 50 (5%)</span>
+Скидка = РассчитатьСкидку(<span class="num">1000</span>, <span class="num">10</span>); <span class="cmt">// 100 (10%)</span></code><button class="copy-btn" onclick="copyCode(this)">Копировать</button></pre>
+        </section>
+
+        <!-- §6 ЗАПРОСЫ -->
+        <section class="page" id="queries">
+            <div class="breadcrumbs">Главная / <span>§6 Запросы</span></div>
+            <h1>§6. Язык запросов <span class="accent">1С</span></h1>
+            <p class="subtitle">Основной инструмент получения данных</p>
+
+            <div class="para">
+                <div class="para-number">6.1</div>
+                <h2>Что такое запрос</h2>
+            </div>
+            <p>Запросы в 1С работают не с физическими таблицами СУБД, а с <strong>таблицами запросов</strong> — «образами», которые предоставляет платформа. Это позволяет использовать понятные имена объектов конфигурации.</p>
+
+            <div class="callout info">
+                <strong>ℹ️ Важно:</strong> Язык запросов 1С не является чистым SQL. Он транслируется в диалект конкретной СУБД (MS SQL, PostgreSQL, Oracle, IBM DB2).
+            </div>
+
+            <div class="para">
+                <div class="para-number">6.2</div>
+                <h2>Структура запроса</h2>
+            </div>
+            <pre><code>Запрос = <span class="kw">Новый</span> Запрос;
+Запрос.Текст =
+<span class="str">"ВЫБРАТЬ
+|    Номенклатура.Ссылка КАК Ссылка,
+|    Номенклатура.Наименование КАК Наименование
+|ИЗ
+|    Справочник.Номенклатура КАК Номенклатура
+|ГДЕ
+|    Номенклатура.Цена > &МинЦена
+|УПОРЯДОЧИТЬ ПО
+|    Наименование"</span>;
+
+Запрос.УстановитьПараметр(<span class="str">"МинЦена"</span>, <span class="num">1000</span>);</code><button class="copy-btn" onclick="copyCode(this)">Копировать</button></pre>
+
+            <div class="para">
+                <div class="para-number">6.3</div>
+                <h2>Соединения таблиц</h2>
+            </div>
+            <pre><code><span class="kw">ВЫБРАТЬ</span>
+    Док.Ссылка КАК Документ,
+    Товар.Номенклатура.Наименование КАК Товар
+<span class="kw">ИЗ</span>
+    Документ.РеализацияТоваров КАК Док
+    <span class="kw">ВНУТРЕННЕЕ СОЕДИНЕНИЕ</span> Документ.РеализацияТоваров.Товары КАК Товар
+    <span class="kw">ПО</span> Док.Ссылка = Товар.Ссылка</code><button class="copy-btn" onclick="copyCode(this)">Копировать</button></pre>
+
+            <div class="para">
+                <div class="para-number">6.4</div>
+                <h2>Группировка</h2>
+            </div>
+            <pre><code><span class="kw">ВЫБРАТЬ</span>
+    Товары.Номенклатура КАК Номенклатура,
+    <span class="fn">СУММА</span>(Товары.Количество) КАК ВсегоКоличество
+<span class="kw">ИЗ</span>
+    Документ.РеализацияТоваров.Товары КАК Товары
+<span class="kw">СГРУППИРОВАТЬ ПО</span>
+    Товары.Номенклатура
+<span class="kw">ИМЕЮЩИЕ</span>
+    <span class="fn">СУММА</span>(Товары.Сумма) > <span class="num">100000</span></code><button class="copy-btn" onclick="copyCode(this)">Копировать</button></pre>
+
+            <div class="para">
+                <div class="para-number">6.5</div>
+                <h2>Временные таблицы</h2>
+            </div>
+            <pre><code>Запрос.Текст =
+<span class="str">"ВЫБРАТЬ
+|    Номенклатура.Ссылка КАК Номенклатура
+|ПОМЕСТИТЬ ВТ_Товары
+|ИЗ
+|    Справочник.Номенклатура КАК Номенклатура
+|ГДЕ
+|    Номенклатура.ЭтоГруппа = ЛОЖЬ
+|;
+|ВЫБРАТЬ
+|    ВТ_Товары.Номенклатура.Наименование
+|ИЗ
+|    ВТ_Товары КАК ВТ_Товары"</span>;</code><button class="copy-btn" onclick="copyCode(this)">Копировать</button></pre>
+
+            <div class="callout warn">
+                <strong>⚠️ Производительность:</strong> Избегайте <code>*</code> в SELECT, соединений с подзапросами, использования <code>В (&Массив)</code> с большими списками.
+            </div>
+        </section>
+
+        <!-- §7 SQL -->
+        <section class="page" id="sql">
+            <div class="breadcrumbs">Главная / <span>§7 SQL и СУБД</span></div>
+            <h1>§7. SQL и взаимодействие с СУБД</h1>
+            <p class="subtitle">Особенности работы с базами данных</p>
+
+            <div class="para">
+                <div class="para-number">7.1</div>
+                <h2>Отличия от чистого SQL</h2>
+            </div>
+            <ul>
+                <li>Обращение к объектам метаданных, а не к таблицам напрямую</li>
+                <li>Точки в ссылочных полях: <code>Документ.Контрагент.Наименование</code></li>
+                <li>Автоматическое соединение при обращении через точку</li>
+                <li>Ключевые слова на русском языке</li>
+            </ul>
+
+            <div class="para">
+                <div class="para-number">7.2</div>
+                <h2>Таблицы запросов</h2>
+            </div>
+            <p>Вы не можете обратиться к таблице СУБД напрямую. Вы обращаетесь к «образу» таблицы, который предоставляет платформа.</p>
+
+            <div class="callout danger">
+                <strong>🚫 Не рекомендуется:</strong> Прямая работа с таблицами СУБД в обход платформы нарушает целостность данных и не поддерживается.
+            </div>
+        </section>
+
+        <!-- §8 ТРАНЗАКЦИИ -->
+        <section class="page" id="transactions">
+            <div class="breadcrumbs">Главная / <span>§8 Транзакции</span></div>
+            <h1>§8. Транзакции и блокировки</h1>
+            <p class="subtitle">Обеспечение целостности данных</p>
+
+            <div class="para">
+                <div class="para-number">8.1</div>
+                <h2>Явная транзакция</h2>
+            </div>
+            <pre><code><span class="kw">НачатьТранзакцию</span>();
+<span class="kw">Попытка</span>
+    Документ.Записать();
+    Регистр.Записать();
+
+    <span class="kw">ЗафиксироватьТранзакцию</span>();
+<span class="kw">Исключение</span>
+    <span class="kw">ОтменитьТранзакцию</span>();
+    ЗаписьЖурналаРегистрации(<span class="str">"Ошибка"</span>, , , , ОписаниеОшибки());
+<span class="kw">КонецПопытки</span>;</code><button class="copy-btn" onclick="copyCode(this)">Копировать</button></pre>
+
+            <div class="para">
+                <div class="para-number">8.2</div>
+                <h2>Управляемые блокировки</h2>
+            </div>
+            <pre><code>Блокировка = <span class="kw">Новый</span> БлокировкаДанных;
+Элемент = Блокировка.Добавить(<span class="str">"Справочник.Номенклатура"</span>);
+Элемент.УстановитьЗначение(<span class="str">"Ссылка"</span>, СсылкаНаТовар);
+Блокировка.Заблокировать();</code><button class="copy-btn" onclick="copyCode(this)">Копировать</button></pre>
+
+            <div class="callout warn">
+                <strong>⚠️ Дедлоки:</strong> Всегда блокируйте данные в одном порядке, чтобы избежать взаимных блокировок.
+            </div>
+        </section>
+
+        <!-- §9 ФОРМЫ -->
+        <section class="page" id="forms">
+            <div class="breadcrumbs">Главная / <span>§9 Управляемые формы</span></div>
+            <h1>§9. Управляемые формы</h1>
+            <p class="subtitle">Архитектура и конструирование интерфейса</p>
+
+            <div class="para">
+                <div class="para-number">9.1</div>
+                <h2>Что такое управляемая форма</h2>
+            </div>
+            <p><strong>Управляемая форма</strong> — это объект, который создаётся на сервере согласно настройкам в конфигураторе, а затем выводится в клиентском приложении [citation:2][citation:5].</p>
+            <p>Благодаря этой архитектуре, форма существует <strong>одновременно и на сервере, и на клиенте</strong>. У неё есть серверный и клиентский контекст выполнения кода [citation:5][citation:9].</p>
+
+            <div class="callout info">
+                <strong>ℹ️ Ключевая идея:</strong> На стороне клиента форма только <em>прорисовывается</em>. Все операции с данными, вычисления и доступ к информационной базе выполняются на сервере [citation:2][citation:5].
+            </div>
+
+            <div class="para">
+                <div class="para-number">9.2</div>
+                <h2>Конструктор формы — 7 закладок</h2>
+            </div>
+            <p>В конфигураторе форма редактируется через конструктор, который содержит 7 закладок [citation:2]:</p>
+            <table>
+                <tr><th>Закладка</th><th>Назначение</th></tr>
+                <tr><td><strong>Элементы</strong></td><td>Состав и порядок элементов управления на форме</td></tr>
+                <tr><td><strong>Командный интерфейс</strong></td><td>Видимость и расположение команд</td></tr>
+                <tr><td><strong>Реквизиты</strong></td><td>Данные, с которыми работает форма</td></tr>
+                <tr><td><strong>Команды</strong></td><td>Команды формы: собственные, стандартные, глобальные</td></tr>
+                <tr><td><strong>Параметры</strong></td><td>Данные для настройки формы при открытии</td></tr>
+                <tr><td><strong>Форма</strong></td><td>Предварительный просмотр формы</td></tr>
+                <tr><td><strong>Модуль</strong></td><td>Алгоритмы взаимодействия на встроенном языке</td></tr>
+            </table>
+
+            <div class="para">
+                <div class="para-number">9.3</div>
+                <h2>Директивы компиляции</h2>
+            </div>
+            <p>Разработчик сам указывает, какой код выполняется на сервере, а какой на клиенте, при помощи директив [citation:2][citation:5]:</p>
+            <table>
+                <tr><th>Директива</th><th>Контекст выполнения</th></tr>
+                <tr><td><code>&НаКлиенте</code></td><td>Выполняется на машине пользователя</td></tr>
+                <tr><td><code>&НаСервере</code></td><td>Выполняется на сервере, с доступом ко всем данным формы</td></tr>
+                <tr><td><code>&НаСервереБезКонтекста</code></td><td>Выполняется на сервере, без передачи данных формы</td></tr>
+                <tr><td><code>&НаКлиентеНаСервере</code></td><td>Комбинированный вызов</td></tr>
+                <tr><td><code>&НаКлиентеНаСервереБезКонтекста</code></td><td>Комбинированный вызов без контекста</td></tr>
+            </table>
+
+            <div class="callout tip">
+                <strong>💡 Рекомендация:</strong> Используйте <code>НаСервереБезКонтекста</code>, когда данные формы не нужны на сервере — это быстрее, так как не тратится время на сериализацию данных.
+            </div>
+
+            <div class="para">
+                <div class="para-number">9.4</div>
+                <h2>Виды элементов формы</h2>
+            </div>
+            <p>В форме используются пять основных видов элементов :</p>
+            <table>
+                <tr><th>Элемент</th><th>Назначение</th></tr>
+                <tr><td><strong>Поле</strong></td><td>Отображение и ввод данных (текстовые, числовые, ссылочные)</td></tr>
+                <tr><td><strong>Группа</strong></td><td>Группировка элементов: Обычная группа, Страницы, Командная панель, Подменю</td></tr>
+                <tr><td><strong>Кнопка</strong></td><td>Выполнение команд, гиперссылки</td></tr>
+                <tr><td><strong>Таблица</strong></td><td>Отображение и редактирование табличных данных</td></tr>
+                <tr><td><strong>Декорация</strong></td><td>Надпись, Картинка</td></tr>
+            </table>
+
+            <div class="para">
+                <div class="para-number">9.5</div>
+                <h2>Основной реквизит формы</h2>
+            </div>
+            <p>Если у формы есть <strong>основной реквизит</strong>, это определяет её функциональность. Например, если основной реквизит — документ, то при закрытии формы система запросит подтверждение записи .</p>
+            <p>От типа основного реквизита зависит набор доступных свойств и методов в модуле формы .</p>
+        </section>
+
+        <!-- §10 СОБЫТИЯ ФОРМ -->
+        <section class="page" id="formevents">
+            <div class="breadcrumbs">Главная / <span>§10 События форм</span></div>
+            <h1>§10. События и обработчики форм</h1>
+            <p class="subtitle">Реакция на действия пользователя</p>
+
+            <div class="para">
+                <div class="para-number">10.1</div>
+                <h2>Что такое событие</h2>
+            </div>
+            <p><strong>Событие</strong> — это момент в работе формы или её элементов, когда система может передать управление коду разработчика. Используя встроенный язык, разработчик может «вклиниться» в эти события и описать собственный алгоритм [citation:12][citation:16].</p>
+
+            <div class="para">
+                <div class="para-number">10.2</div>
+                <h2>Основные события формы</h2>
+            </div>
+            <table>
+                <tr><th>Событие</th><th>Когда возникает</th></tr>
+                <tr><td><strong>ПриСозданииНаСервере</strong></td><td>При создании формы</td></tr>
+                <tr><td><strong>ПриОткрытии</strong></td><td>Перед открытием формы</td></tr>
+                <tr><td><strong>ПриЧтенииНаСервере</strong></td><td>После чтения объекта с сервера</td></tr>
+                <tr><td><strong>ПередЗаписью</strong></td><td>Перед записью объекта в базу</td></tr>
+                <tr><td><strong>ПослеЗаписи</strong></td><td>После записи объекта</td></tr>
+                <tr><td><strong>ПриЗакрытии</strong></td><td>При завершении работы с формой</td></tr>
+            </table>
+
+            <div class="para">
+                <div class="para-number">10.3</div>
+                <h2>События элементов формы</h2>
+            </div>
+            <table>
+                <tr><th>Событие</th><th>Назначение</th></tr>
+                <tr><td><strong>ПриИзменении</strong></td><td>Возникает после изменения значения поля</td></tr>
+                <tr><td><strong>НачалоВыбора</strong></td><td>Перед открытием формы выбора</td></tr>
+                <tr><td><strong>ОбработкаВыбора</strong></td><td>После выбора значения</td></tr>
+                <tr><td><strong>ПриАктивизацииСтроки</strong></td><td>При переходе к другой строке таблицы</td></tr>
+            </table>
+
+            <div class="para">
+                <div class="para-number">10.4</div>
+                <h2>Пример: автопересчёт суммы</h2>
+            </div>
+            <p>Классический пример обработки события <code>ПриИзменении</code> для поля табличной части — автоматический пересчёт суммы при изменении количества [citation:16][citation:19]:</p>
+            <pre><code>&НаКлиенте
+<span class="kw">Процедура</span> <span class="fn">МатериалыКоличествоПриИзменении</span>(Элемент)
+    СтрокаТабличнойЧасти = Элементы.Материалы.ТекущиеДанные;
+    СтрокаТабличнойЧасти.Сумма =
+        СтрокаТабличнойЧасти.Количество * СтрокаТабличнойЧасти.Цена;
+<span class="kw">КонецПроцедуры</span></code><button class="copy-btn" onclick="copyCode(this)">Копировать</button></pre>
+
+            <div class="callout info">
+                <strong>ℹ️ Разбор:</strong> <code>Элементы.Материалы</code> — обращение к табличной части на форме. <code>ТекущиеДанные</code> — строка, с которой работает пользователь [citation:16].
+            </div>
+
+            <div class="para">
+                <div class="para-number">10.5</div>
+                <h2>Вынос логики в общий модуль</h2>
+            </div>
+            <p>Если одинаковый расчёт нужен в нескольких документах, логику выносят в общий модуль [citation:19]:</p>
+            <pre><code><span class="cmt">// Общий модуль РаботаСДокументами</span>
+<span class="kw">Процедура</span> <span class="fn">РассчитатьСумму</span>(СтрокаТабличнойЧасти) <span class="kw">Экспорт</span>
+    СтрокаТабличнойЧасти.Сумма =
+        СтрокаТабличнойЧасти.Количество * СтрокаТабличнойЧасти.Цена;
+<span class="kw">КонецПроцедуры</span>
+
+<span class="cmt">// В модуле формы документа</span>
+&НаКлиенте
+<span class="kw">Процедура</span> <span class="fn">МатериалыКоличествоПриИзменении</span>(Элемент)
+    РаботаСДокументами.РассчитатьСумму(
+        Элементы.Материалы.ТекущиеДанные);
+<span class="kw">КонецПроцедуры</span></code><button class="copy-btn" onclick="copyCode(this)">Копировать</button></pre>
+        </section>
+
+        <!-- §11 ОТЧЁТЫ -->
+        <section class="page" id="reports">
+            <div class="breadcrumbs">Главная / <span>§11 Отчёты и СКД</span></div>
+            <h1>§11. Отчёты и система компоновки данных</h1>
+            <p class="subtitle">Гибкая настройка отчётности</p>
+
+            <div class="para">
+                <div class="para-number">11.1</div>
+                <h2>Что такое СКД</h2>
+            </div>
+            <p><strong>Система компоновки данных (СКД)</strong> — механизм платформы, позволяющий создавать отчёты на основе декларативного описания: наборы данных, связи, вычисляемые поля, ресурсы, параметры и настройки.</p>
+
+            <div class="para">
+                <div class="para-number">11.2</div>
+                <h2>Составные части схемы</h2>
+            </div>
+            <table>
+                <tr><th>Часть</th><th>Назначение</th></tr>
+                <tr><td><strong>Наборы данных</strong></td><td>Запросы и объекты</td></tr>
+                <tr><td><strong>Связи наборов</strong></td><td>Соединение нескольких наборов</td></tr>
+                <tr><td><strong>Вычисляемые поля</strong></td><td>Поля по формулам</td></tr>
+                <tr><td><strong>Ресурсы</strong></td><td>Агрегируемые поля (Сумма, Количество)</td></tr>
+                <tr><td><strong>Параметры</strong></td><td>Входные значения для отбора</td></tr>
+                <tr><td><strong>Настройки</strong></td><td>Группировки, отборы, оформление</td></tr>
+            </table>
+
+            <div class="para">
+                <div class="para-number">11.3</div>
+                <h2>Программное выполнение СКД</h2>
+            </div>
+            <pre><code>Схема = ПолучитьМакет(<span class="str">"СхемаКомпоновкиДанных"</span>);
+Настройки = Схема.НастройкиПоУмолчанию;
+
+Настройки.ПараметрыДанных.УстановитьЗначениеПараметра(
+    <span class="str">"НачалоПериода"</span>, НачалоМесяца(ТекущаяДата()));
+
+Компоновщик = <span class="kw">Новый</span> КомпоновщикМакетаКомпоновкиДанных;
+Макет = Компоновщик.Выполнить(Схема, Настройки);</code><button class="copy-btn" onclick="copyCode(this)">Копировать</button></pre>
+        </section>
+
+        <!-- §12 РАСШИРЕНИЯ -->
+        <section class="page" id="extensions">
+            <div class="breadcrumbs">Главная / <span>§12 Расширения</span></div>
+            <h1>§12. Расширения конфигурации</h1>
+            <p class="subtitle">Доработка типовых решений</p>
+
+            <div class="para">
+                <div class="para-number">12.1</div>
+                <h2>Возможности расширений</h2>
+            </div>
+            <ul>
+                <li>Добавление собственных объектов метаданных</li>
+                <li>Расширение форм (реквизиты, команды, элементы)</li>
+                <li>Переопределение методов через аннотации</li>
+                <li>Изменение состава ролей</li>
+            </ul>
+
+            <div class="para">
+                <div class="para-number">12.2</div>
+                <h2>Аннотации расширений</h2>
+            </div>
+            <pre><code><span class="cmt">// Полная замена метода</span>
+&Вместо(<span class="str">"ОбработкаПроведения"</span>)
+<span class="kw">Процедура</span> <span class="fn">Расш_ОбработкаПроведения</span>(Отказ)
+    <span class="cmt">// Своя реализация</span>
+<span class="kw">КонецПроцедуры</span>
+
+<span class="cmt">// Дополнительная логика после</span>
+&После(<span class="str">"ПриЗаписи"</span>)
+<span class="kw">Процедура</span> <span class="fn">Расш_ПриЗаписи</span>()
+    Сообщить(<span class="str">"Запись выполнена"</span>);
+<span class="kw">КонецПроцедуры</span></code><button class="copy-btn" onclick="copyCode(this)">Копировать</button></pre>
+        </section>
+
+        <!-- §13 ПАТТЕРНЫ -->
+        <section class="page" id="patterns">
+            <div class="breadcrumbs">Главная / <span>§13 Паттерны</span></div>
+            <h1>§13. Паттерны разработки</h1>
+            <p class="subtitle">Проверенные архитектурные решения</p>
+
+            <div class="para">
+                <div class="para-number">13.1</div>
+                <h2>GRASP-паттерны</h2>
+            </div>
+            <p>Паттерны распределения обязанностей помогают сделать архитектуру прозрачной и снизить связность.</p>
+
+            <h3>Information Expert</h3>
+            <p>Обязанность должна быть у того объекта, который владеет данными. Например, расчёт стоимости — у документа, содержащего товар.</p>
+
+            <h3>Controller</h3>
+            <p>Координация сценария использования. В 1С — общий модуль или модуль формы, управляющий последовательностью операций.</p>
+
+            <div class="para">
+                <div class="para-number">13.2</div>
+                <h2>Обработка ошибок</h2>
+            </div>
+            <pre><code><span class="kw">Попытка</span>
+    Результат = ВыполнитьОпаснуюОперацию();
+<span class="kw">Исключение</span>
+    ЗаписьЖурналаРегистрации(
+        <span class="str">"МойМодуль.Ошибка"</span>,
+        УровеньЖурналаРегистрации.Ошибка,
+        , , ПодробноеПредставлениеОшибки(ИнформацияОбОшибке())
+    );
+<span class="kw">КонецПопытки</span>;</code><button class="copy-btn" onclick="copyCode(this)">Копировать</button></pre>
+        </section>
+
+        <!-- §14 ОПТИМИЗАЦИЯ -->
+        <section class="page" id="optimization">
+            <div class="breadcrumbs">Главная / <span>§14 Оптимизация</span></div>
+            <h1>§14. Оптимизация производительности</h1>
+            <p class="subtitle">Быстрые запросы и эффективный код</p>
+
+            <div class="para">
+                <div class="para-number">14.1</div>
+                <h2>Правила оптимизации запросов</h2>
+            </div>
+            <ol>
+                <li>Не используйте <code>*</code> — перечисляйте поля явно</li>
+                <li>Избегайте соединений с подзапросами — используйте временные таблицы</li>
+                <li>Ставьте условия в <code>ГДЕ</code>, а не в <code>ИМЕЮЩИЕ</code> где возможно</li>
+                <li>Индексируйте поля для отбора и соединения</li>
+                <li>Не используйте <code>В (&Массив)</code> с >1000 элементов</li>
+                <li>Используйте <code>ПЕРВЫЕ N</code> для ограничения выборки</li>
+            </ol>
+
+            <div class="para">
+                <div class="para-number">14.2</div>
+                <h2>Пакетная обработка данных</h2>
+            </div>
+            <pre><code><span class="cmt">// Плохо: чтение всех записей</span>
+Выборка = Регистр.Выбрать();
+<span class="kw">Пока</span> Выборка.Следующий() <span class="kw">Цикл</span> ... <span class="kw">КонецЦикла</span>;
+
+<span class="cmt">// Хорошо: пакетная обработка</span>
+Выборка = Регистр.Выбрать(Порядок, Порция);
+<span class="kw">Пока</span> Выборка.Следующий() <span class="kw">Цикл</span>
+    ОбработатьПорцию(Выборка.Выгрузить());
+<span class="kw">КонецЦикла</span>;</code><button class="copy-btn" onclick="copyCode(this)">Копировать</button></pre>
+
+            <div class="para">
+                <div class="para-number">14.3</div>
+                <h2>Инструменты мониторинга</h2>
+            </div>
+            <ul>
+                <li><strong>Технологический журнал</strong> — события CALL, DBMSSQL, EXCP</li>
+                <li><strong>Apdex</strong> — индекс производительности</li>
+                <li><strong>Замер производительности</strong> — встроенный механизм</li>
+            </ul>
+        </section>
+
+        <!-- §15 СНИППЕТЫ -->
+        <section class="page" id="snippets">
+            <div class="breadcrumbs">Главная / <span>§15 Сниппеты</span></div>
+            <h1>§15. Сниппеты и типовые приёмы</h1>
+            <p class="subtitle">Готовые решения для частых задач</p>
+
+            <div class="para">
+                <div class="para-number">15.1</div>
+                <h2>Поиск и создание элементов</h2>
+            </div>
+            <pre><code><span class="cmt">// Найти по наименованию</span>
+Ссылка = Справочники.Контрагенты.НайтиПоНаименованию(<span class="str">"ООО Ромашка"</span>, Истина);
+
+<span class="cmt">// Создать новый элемент</span>
+НовыйЭлемент = Справочники.Номенклатура.СоздатьЭлемент();
+НовыйЭлемент.Наименование = <span class="str">"Новый товар"</span>;
+НовыйЭлемент.Записать();</code><button class="copy-btn" onclick="copyCode(this)">Копировать</button></pre>
+
+            <div class="para">
+                <div class="para-number">15.2</div>
+                <h2>Работа со строками</h2>
+            </div>
+            <pre><code><span class="cmt">// Разбор строки</span>
+Части = СтрРазделить(<span class="str">"a,b,c,d"</span>, <span class="str">","</span>);
+
+<span class="cmt">// Объединение</span>
+Объединено = СтрСоединить(Части, <span class="str">"-"</span>); <span class="cmt">// "a-b-c-d"</span>
+
+<span class="cmt">// Форматирование числа</span>
+Формат = <span class="kw">Новый</span> Формат(<span class="str">"ЧЦ=15; ЧДЦ=2; ЧН=0,00; ЧРД=,"</span>);
+Строка = Формат(Сумма, Формат); <span class="cmt">// 1 234,56</span></code><button class="copy-btn" onclick="copyCode(this)">Копировать</button></pre>
+
+            <div class="para">
+                <div class="para-number">15.3</div>
+                <h2>Работа с датами</h2>
+            </div>
+            <pre><code>ТекущаяДата = ТекущаяДата();
+НачалоДня = НачалоДня(ТекущаяДата());
+КонецМесяца = КонецМесяца(ТекущаяДата());
+Разница = РазностьДат(Дата1, Дата2, <span class="str">"День"</span>);</code><button class="copy-btn" onclick="copyCode(this)">Копировать</button></pre>
+        </section>
+
+        <!-- §16 ГЛОССАРИЙ -->
+        <section class="page" id="glossary">
+            <div class="breadcrumbs">Главная / <span>§16 Глоссарий</span></div>
+            <h1>§16. Глоссарий</h1>
+            <p class="subtitle">Термины и определения</p>
+
+            <div class="para">
+                <div class="para-number">16.1</div>
+                <h2>Основные термины</h2>
+            </div>
+            <table>
+                <tr><th>Термин</th><th>Определение</th></tr>
+                <tr><td><strong>Платформа</strong></td><td>Технологическая основа 1С:Предприятие, предоставляющая среду разработки и исполнения</td></tr>
+                <tr><td><strong>Конфигурация</strong></td><td>Прикладное решение, разработанное на платформе</td></tr>
+                <tr><td><strong>Метаданные</strong></td><td>Описание объектов конфигурации в дереве</td></tr>
+                <tr><td><strong>Ссылка</strong></td><td>Уникальный идентификатор объекта в базе данных</td></tr>
+                <tr><td><strong>Реквизит</strong></td><td>Свойство объекта метаданных или формы</td></tr>
+                <tr><td><strong>Табличная часть</strong></td><td>Структурированный набор данных, принадлежащий объекту</td></tr>
+                <tr><td><strong>Регистр</strong></td><td>Объект для хранения и обработки данных в разрезе измерений</td></tr>
+                <tr><td><strong>СКД</strong></td><td>Система компоновки данных — механизм построения отчётов</td></tr>
+                <tr><td><strong>Тонкий клиент</strong></td><td>Клиентское приложение, работающее с сервером через канал связи</td></tr>
+                <tr><td><strong>Веб-клиент</strong></td><td>Клиент, работающий в браузере</td></tr>
+            </table>
+
+            <div class="para">
+                <div class="para-number">16.2</div>
+                <h2>Директивы компиляции</h2>
+            </div>
+            <table>
+                <tr><th>Директива</th><th>Контекст</th></tr>
+                <tr><td><code>&НаКлиенте</code></td><td>Клиентский контекст</td></tr>
+                <tr><td><code>&НаСервере</code></td><td>Серверный контекст</td></tr>
+                <tr><td><code>&НаСервереБезКонтекста</code></td><td>Сервер без передачи данных формы</td></tr>
+            </table>
+        </section>
+
+    </main>
+</div>
+
+<footer>
+    <div class="foot-left">
+        <strong style="color:var(--accent)">ART</strong> · База знаний 1С — учебник · 2024
+    </div>
+    <div class="foot-right">
+        <span>🐙 GitHub: <a href="https://github.com/OBLADAET-ru" target="_blank" rel="noopener">OBLADAET-ru</a></span>
+        <span>👤 Создатель: <strong style="color:var(--text)">Платонов Виктор А.</strong></span>
+    </div>
+</footer>
+
+<script>
+    const searchIndex = [
+        { page: 'basics', title: '§1 Основы платформы', desc: 'Архитектура, режимы, объекты конфигурации' },
+        { page: 'syntax', title: '§2 Синтаксис', desc: 'Переменные, операторы, циклы, условия' },
+        { page: 'types', title: '§3 Типы данных', desc: 'Строка, Число, Дата, Булево, Null' },
+        { page: 'collections', title: '§4 Коллекции', desc: 'Массив, Структура, Соответствие, ТаблицаЗначений' },
+        { page: 'functions', title: '§5 Процедуры и функции', desc: 'Экспорт, параметры, возврат' },
+        { page: 'queries', title: '§6 Язык запросов', desc: 'SELECT, JOIN, GROUP BY, временные таблицы' },
+        { page: 'sql', title: '§7 SQL и СУБД', desc: 'Отличия от SQL, таблицы запросов' },
+        { page: 'transactions', title: '§8 Транзакции', desc: 'Блокировки, целостность данных' },
+        { page: 'forms', title: '§9 Управляемые формы', desc: 'Конструктор, директивы, элементы' },
+        { page: 'formevents', title: '§10 События форм', desc: 'ПриИзменении, обработчики, автопересчёт' },
+        { page: 'reports', title: '§11 Отчёты и СКД', desc: 'Система компоновки данных' },
+        { page: 'extensions', title: '§12 Расширения', desc: 'Аннотации &Вместо, &После' },
+        { page: 'patterns', title: '§13 Паттерны', desc: 'GRASP, Information Expert' },
+        { page: 'optimization', title: '§14 Оптимизация', desc: 'Запросы, индексы, технологический журнал' },
+        { page: 'snippets', title: '§15 Сниппеты', desc: 'Готовые куски кода' },
+        { page: 'glossary', title: '§16 Глоссарий', desc: 'Термины и определения' }
+    ];
+
+    document.querySelectorAll('[data-page]').forEach(el => {
+        el.addEventListener('click', e => {
+            e.preventDefault();
+            showPage(el.dataset.page);
+        });
+    });
+
+    function showPage(pageId) {
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        const page = document.getElementById(pageId);
+        if (page) {
+            page.classList.add('active');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+        document.querySelectorAll('.nav-link').forEach(l => {
+            l.classList.toggle('active', l.dataset.page === pageId);
+        });
+        if (window.innerWidth <= 900) {
+            document.getElementById('sidebar').classList.remove('open');
+        }
+    }
+
+    function copyCode(btn) {
+        const code = btn.parentElement.querySelector('code').innerText;
+        navigator.clipboard.writeText(code).then(() => {
+            const orig = btn.textContent;
+            btn.textContent = '✓ Скопировано';
+            setTimeout(() => btn.textContent = orig, 1500);
+        });
+    }
+
+    const searchInput = document.getElementById('searchInput');
+    const searchResults = document.getElementById('searchResults');
+
+    searchInput.addEventListener('input', () => {
+        const query = searchInput.value.trim().toLowerCase();
+        if (query.length < 2) {
+            searchResults.classList.remove('active');
+            return;
+        }
+        const matches = searchIndex.filter(item =>
+            item.title.toLowerCase().includes(query) ||
+            item.desc.toLowerCase().includes(query)
+        );
+        if (matches.length === 0) {
+            searchResults.innerHTML = '<div class="search-result-item"><div class="desc">Ничего не найдено</div></div>';
+        } else {
+            searchResults.innerHTML = matches.map(m => `
+      <div class="search-result-item" onclick="selectSearch('${m.page}')">
+        <div class="title">${m.title}</div>
+        <div class="desc">${m.desc}</div>
+      </div>
+    `).join('');
+        }
+        searchResults.classList.add('active');
+    });
+
+    function selectSearch(page) {
+        searchResults.classList.remove('active');
+        searchInput.value = '';
+        showPage(page);
+    }
+
+    document.addEventListener('click', e => {
+        if (!e.target.closest('.search-box')) {
+            searchResults.classList.remove('active');
+        }
+    });
+
+    function toggleSidebar() {
+        document.getElementById('sidebar').classList.toggle('open');
+    }
+
+    window.addEventListener('hashchange', () => {
+        const hash = location.hash.substring(1);
+        if (hash) showPage(hash);
+    });
+    if (location.hash) showPage(location.hash.substring(1));
+</script>
+
+</body>
+</html>

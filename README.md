@@ -14,7 +14,7 @@
 
 ## 🌐 Открыть сайт
 
-**→ [https://obladaet-ru.github.io/1_bace-progg/](https://obladaet-ru.github.io/1_bace-progg/)**
+**→ [https://obladaet-ru.github.io/1_bace-progg/](https://obladaet-ru.github.io/1--base/)**
 
 > ⚠️ Замените ссылку на актуальный URL вашего сайта после включения GitHub Pages.
 

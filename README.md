@@ -6,7 +6,7 @@
   <p><b>Открытый учебник для программистов 1С:Предприятие 8.3+</b></p>
   
   <p>Проект <b>ART</b><br>
-  Автор — <b>Платонов Виктор Артурович</b></p>
+  Автор и разработчик — <b>A.R.T (систем., админ, программист, разработчик).</b></p>
 
   <a href="https://obladaet-ru.github.io/1Cbase/">
     <img src="https://img.shields.io/badge/Открыть_сайт-1Сbase-f7df1e?style=for-the-badge&logoColor=black" alt="Live Site" />

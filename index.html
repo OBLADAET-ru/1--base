@@ -1,0 +1,1288 @@
+Без проблем, бро! 🎯 Понимаю, когда кода много — легко потеряться.
+
+Я внес правку с логотипом **1CBASE x ART** и собрал **весь сайт целиком** в один файл. Просто скопируй этот код, полностью замени свой `index.html` и залей на GitHub.
+
+```html
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>1Сbase x ART — База знаний</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+
+    <style>
+        /* =====================================================
+           ПЕРЕМЕННЫЕ (СТИЛЬ STUDENT.BASE)
+           ===================================================== */
+        :root {
+            --bg: #000000;
+            --bg-surface: #0a0a0a;
+            --bg-code: #111111;
+            --text-main: #ffffff;
+            --text-muted: #888888;
+            --accent: #0033ff;
+            --accent-glow: rgba(0, 51, 255, 0.4);
+            --border: #1e1e1e;
+            --border-hover: #333333;
+
+            --header-h: 60px;
+            --sidebar-w: 300px;
+            --radius: 8px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--text-main);
+            line-height: 1.6;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            font-size: 15px;
+        }
+
+        /* =====================================================
+           ХЕДЕР И ПОИСК
+           ===================================================== */
+        header {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            height: var(--header-h);
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            padding: 0 24px;
+            z-index: 1000;
+            gap: 16px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            color: var(--text-main);
+            flex-shrink: 0;
+        }
+
+        .logo img {
+            height: 28px;
+            width: auto;
+            border-radius: 4px;
+        }
+
+        .logo-text {
+            font-size: 1.2rem;
+            font-weight: 800;
+            letter-spacing: -0.03em;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            text-transform: uppercase;
+        }
+
+        .logo-text .brand-x {
+            color: var(--accent);
+            font-weight: 500;
+            font-size: 0.9rem;
+            margin-left: 4px;
+            text-transform: none;
+        }
+
+        .logo-text .dot {
+            width: 8px;
+            height: 8px;
+            background: var(--accent);
+            border-radius: 50%;
+            box-shadow: 0 0 10px var(--accent-glow);
+            margin-left: 2px;
+        }
+
+        /* Контейнер поиска */
+        .search-container {
+            margin-left: auto;
+            position: relative;
+            width: 300px;
+        }
+
+        .search-box input {
+            width: 100%;
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            padding: 8px 12px 8px 36px;
+            border-radius: var(--radius);
+            color: var(--text-main);
+            font-family: inherit;
+            font-size: 0.85rem;
+            outline: none;
+            transition: all 0.2s;
+        }
+
+        .search-box input:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 15px var(--accent-glow);
+        }
+
+        .search-box::before {
+            content: "🔍";
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 0.75rem;
+            opacity: 0.5;
+            pointer-events: none;
+        }
+
+        /* Выпадающие результаты поиска */
+        .search-results {
+            position: absolute;
+            top: calc(100% + 8px);
+            left: 0;
+            right: 0;
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+            max-height: 300px;
+            overflow-y: auto;
+            display: none;
+            z-index: 1001;
+        }
+
+        .search-results.active { display: block; }
+
+        .search-item {
+            padding: 10px 16px;
+            cursor: pointer;
+            border-bottom: 1px solid var(--border);
+            transition: background 0.15s;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .search-item:last-child { border-bottom: none; }
+        .search-item:hover { background: rgba(0, 51, 255, 0.1); }
+
+        .search-item .s-title { font-size: 0.85rem; font-weight: 600; color: var(--text-main); }
+        .search-item .s-chapter { font-size: 0.7rem; color: var(--accent); font-family: 'Fira Code', monospace; }
+        .search-item .s-desc { font-size: 0.75rem; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+        .menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--text-main);
+            font-size: 1.2rem;
+            cursor: pointer;
+        }
+
+        /* =====================================================
+           МАКЕТ И САЙДБАР
+           ===================================================== */
+        .layout {
+            display: flex;
+            margin-top: var(--header-h);
+            min-height: calc(100vh - var(--header-h));
+        }
+
+        aside {
+            width: var(--sidebar-w);
+            background: var(--bg);
+            border-right: 1px solid var(--border);
+            position: fixed;
+            top: var(--header-h);
+            bottom: 0;
+            left: 0;
+            overflow-y: auto;
+            padding: 20px 0;
+            z-index: 900;
+            transition: transform 0.2s ease;
+            display: flex;
+            flex-direction: column;
+        }
+
+        aside::-webkit-scrollbar { width: 4px; }
+        aside::-webkit-scrollbar-thumb { background: var(--border); }
+
+        .nav-section {
+            padding: 16px 24px 6px;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--text-muted);
+            font-weight: 700;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            padding: 8px 24px;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.15s;
+            border-left: 2px solid transparent;
+        }
+
+        .nav-link:hover { color: var(--text-main); background: var(--bg-surface); }
+        .nav-link.active {
+            color: var(--text-main);
+            background: linear-gradient(90deg, rgba(0, 51, 255, 0.15), transparent);
+            border-left-color: var(--accent);
+        }
+
+        .nav-link .num {
+            font-family: 'Fira Code', monospace;
+            font-size: 0.7rem;
+            margin-right: 12px;
+            opacity: 0.5;
+            width: 24px;
+        }
+
+        .nav-link.active .num { color: var(--accent); opacity: 1; }
+
+        .author-block {
+            margin-top: auto;
+            padding: 20px 24px;
+            border-top: 1px solid var(--border);
+            background: var(--bg-surface);
+        }
+
+        .author-title {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--text-muted);
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .author-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+            font-size: 0.8rem;
+        }
+
+        .author-row:last-child { margin-bottom: 0; }
+
+        .author-icon {
+            width: 32px; height: 32px;
+            display: flex; align-items: center; justify-content: center;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            color: var(--accent);
+            flex-shrink: 0;
+            transition: all 0.3s;
+        }
+
+        .author-row:hover .author-icon { border-color: var(--accent); box-shadow: 0 0 10px var(--accent-glow); }
+        .author-icon svg { width: 16px; height: 16px; fill: currentColor; }
+
+        .author-info { display: flex; flex-direction: column; line-height: 1.2; }
+        .author-info .label { color: var(--text-muted); font-size: 0.7rem; margin-bottom: 2px; }
+        .author-info .value { color: var(--text-main); font-weight: 600; }
+        .author-info a { color: var(--text-main); text-decoration: none; font-weight: 600; transition: color 0.2s; }
+        .author-info a:hover { color: var(--accent); }
+
+        /* =====================================================
+           КОНТЕНТ
+           ===================================================== */
+        main {
+            margin-left: var(--sidebar-w);
+            padding: 40px 6vw;
+            flex: 1;
+            max-width: 1000px;
+        }
+
+        .page { display: none; }
+        .page.active { display: block; animation: fadeIn 0.4s ease; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .breadcrumbs {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-bottom: 16px;
+            font-family: 'Fira Code', monospace;
+        }
+        .breadcrumbs span { color: var(--text-main); }
+
+        h1 {
+            font-size: 2.2rem;
+            font-weight: 800;
+            line-height: 1.15;
+            letter-spacing: -0.04em;
+            margin-bottom: 8px;
+            color: var(--text-main);
+            text-transform: uppercase;
+        }
+
+        h1 .accent { color: var(--accent); text-shadow: 0 0 20px var(--accent-glow); }
+
+        .subtitle {
+            font-size: 1rem;
+            color: var(--text-muted);
+            margin-bottom: 32px;
+            line-height: 1.4;
+        }
+
+        .para {
+            margin: 40px 0 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 12px;
+        }
+
+        .para-num {
+            background: var(--accent);
+            color: #fff;
+            font-family: 'Fira Code', monospace;
+            font-weight: 700;
+            font-size: 0.75rem;
+            padding: 2px 8px;
+            border-radius: 4px;
+            box-shadow: 0 0 10px var(--accent-glow);
+        }
+
+        .para h2 {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--text-main);
+            margin: 0;
+        }
+
+        h3 {
+            font-size: 1.1rem;
+            color: var(--text-main);
+            margin: 24px 0 12px;
+            font-weight: 600;
+        }
+
+        p {
+            margin-bottom: 16px;
+            color: var(--text-muted);
+            line-height: 1.7;
+        }
+
+        strong { color: var(--text-main); font-weight: 600; }
+        em { color: var(--accent); font-style: normal; font-weight: 500; }
+
+        ul, ol { margin: 12px 0 16px 20px; }
+        li { margin-bottom: 8px; color: var(--text-muted); line-height: 1.6; }
+        li::marker { color: var(--accent); }
+
+        .table-responsive {
+            overflow-x: auto;
+            margin: 20px 0;
+            -webkit-overflow-scrolling: touch;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: var(--bg-surface);
+            min-width: 600px;
+        }
+
+        th, td {
+            padding: 12px 16px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+            font-size: 0.85rem;
+        }
+
+        th {
+            background: var(--bg);
+            color: var(--text-main);
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 0.7rem;
+            letter-spacing: 0.05em;
+        }
+
+        td { color: var(--text-muted); }
+        td strong { color: var(--text-main); }
+        tr:last-child td { border-bottom: none; }
+
+        pre {
+            background: var(--bg-code);
+            border: 1px solid var(--border);
+            border-left: 3px solid var(--accent);
+            border-radius: var(--radius);
+            padding: 16px;
+            overflow-x: auto;
+            margin: 16px 0;
+            position: relative;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.85rem;
+            line-height: 1.6;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        code { font-family: 'Fira Code', monospace; color: #e4e4e7; }
+        .kw { color: #60a5fa; font-weight: 500; }
+        .str { color: #a5b4fc; }
+        .num { color: #fcd34d; }
+        .cmt { color: #71717a; font-style: italic; }
+        .fn { color: #6ee7b7; }
+
+        .callout {
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 16px;
+            margin: 20px 0;
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+            font-size: 0.9rem;
+            line-height: 1.6;
+            color: var(--text-muted);
+        }
+
+        .callout-icon { font-size: 1.2rem; line-height: 1; }
+        .callout.info { border-left: 3px solid var(--accent); }
+        .callout.warn { border-left: 3px solid #f59e0b; }
+        .callout.tip { border-left: 3px solid #10b981; }
+
+        /* Карточки на главной */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 16px;
+            margin-top: 24px;
+        }
+
+        .card-link {
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 24px;
+            text-decoration: none;
+            color: inherit;
+            transition: all 0.3s;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card-link::before {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle at 100% 0%, rgba(0, 51, 255, 0.1), transparent 60%);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .card-link:hover {
+            border-color: var(--accent);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0, 51, 255, 0.15);
+        }
+
+        .card-link:hover::before { opacity: 1; }
+
+        .card-link h4 {
+            color: var(--text-main);
+            font-size: 1.1rem;
+            margin-bottom: 8px;
+            font-weight: 800;
+            text-transform: uppercase;
+            position: relative;
+            z-index: 1;
+        }
+        .card-link p {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            margin: 0;
+            line-height: 1.4;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* =====================================================
+           АДАПТИВ
+           ===================================================== */
+        @media (max-width: 1024px) {
+            main { padding: 30px 4vw; }
+        }
+
+        @media (max-width: 900px) {
+            aside { transform: translateX(-100%); width: 280px; }
+            aside.open { transform: translateX(0); }
+            main { margin-left: 0; padding: 24px 20px; }
+            .menu-btn { display: block; }
+            .logo-text .brand-x { display: none; } /* Скрываем приписку на мобильных */
+            .search-container { width: 180px; }
+
+            h1 { font-size: 1.6rem; }
+            .para h2 { font-size: 1.1rem; }
+            .para { margin: 30px 0 12px; }
+            p, li { font-size: 0.9rem; }
+            th, td { padding: 8px 12px; font-size: 0.8rem; }
+            pre { padding: 12px; font-size: 0.8rem; }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <button class="menu-btn" onclick="toggleSidebar()">☰</button>
+
+    <!-- Обновленный логотип 1CBASE x ART -->
+    <a href="#home" class="logo" onclick="showPage('home'); return false;">
+        <img src="logo.png" alt="ART" onerror="this.style.display='none'">
+        <div class="logo-text">
+            1CBASE
+            <span class="brand-x">x ART</span>
+            <div class="dot"></div>
+        </div>
+    </a>
+
+    <!-- Блок поиска -->
+    <div class="search-container">
+        <div class="search-box">
+            <input type="text" id="searchInput" placeholder="Поиск темы..." autocomplete="off">
+        </div>
+        <div class="search-results" id="searchResults"></div>
+    </div>
+</header>
+
+<div class="layout">
+    <aside id="sidebar">
+        <div class="nav-section">Введение</div>
+        <a class="nav-link active" data-page="home"><span class="num">§0</span> Главная</a>
+        <a class="nav-link" data-page="basics"><span class="num">§1</span> Основы платформы</a>
+
+        <div class="nav-section">Часть I. Компетенции</div>
+        <a class="nav-link" data-page="skills-core"><span class="num">§2</span> Ядро платформы</a>
+        <a class="nav-link" data-page="skills-arch"><span class="num">§3</span> Архитектура и СУБД</a>
+        <a class="nav-link" data-page="skills-devops"><span class="num">§4</span> DevOps и CI/CD</a>
+        <a class="nav-link" data-page="skills-domain"><span class="num">§5</span> Предметные области</a>
+        <a class="nav-link" data-page="skills-soft"><span class="num">§6</span> Soft Skills</a>
+
+        <div class="nav-section">Часть II. Матрица грейдов</div>
+        <a class="nav-link" data-page="grades"><span class="num">§7</span> Матрица компетенций</a>
+
+        <div class="nav-section">Часть III. Глубокий разбор</div>
+        <a class="nav-link" data-page="deep-sql"><span class="num">§8</span> Инженерия СУБД</a>
+        <a class="nav-link" data-page="deep-integration"><span class="num">§9</span> Интеграционные шины</a>
+        <a class="nav-link" data-page="deep-devops"><span class="num">§10</span> DevOps-инструменты</a>
+        <a class="nav-link" data-page="deep-highload"><span class="num">§11</span> HighLoad и Анализ</a>
+
+        <div class="nav-section">Часть IV. Практика</div>
+        <a class="nav-link" data-page="practice-forms"><span class="num">§12</span> Работа с формами</a>
+        <a class="nav-link" data-page="practice-transactions"><span class="num">§13</span> Транзакции</a>
+        <a class="nav-link" data-page="practice-patterns"><span class="num">§14</span> Паттерны</a>
+        <a class="nav-link" data-page="practice-typical"><span class="num">§15</span> Типовые конфигурации</a>
+
+        <div class="nav-section">Часть V. Справочник</div>
+        <a class="nav-link" data-page="snippets"><span class="num">§16</span> Сниппеты</a>
+        <a class="nav-link" data-page="glossary"><span class="num">§17</span> Глоссарий</a>
+        <a class="nav-link" data-page="interview"><span class="num">§18</span> Собеседование</a>
+        <a class="nav-link" data-page="release"><span class="num">§19</span> Релизы</a>
+
+        <div class="nav-section">Часть VI. Инфраструктура</div>
+        <a class="nav-link" data-page="infrastructure"><span class="num">§20</span> Железо и настройка</a>
+
+        <div class="author-block">
+            <div class="author-title">Об авторе</div>
+            <div class="author-row">
+                <div class="author-icon">
+                    <svg viewBox="0 0 24 24"><path d="M12 .3a12 12 0 00-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.6-1.4-1.4-1.8-1.4-1.8-1-.7.1-.7.1-.7 1.2.1 1.9 1.2 1.9 1.2 1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.7-1.6-2.7-.3-5.5-1.3-5.5-6 0-1.3.5-2.4 1.2-3.2 0-.4-.5-1.6.2-3.3 0 0 1-.3 3.3 1.2a11.5 11.5 0 016 0c2.3-1.5 3.3-1.2 3.3-1.2.7 1.7.2 2.9.1 3.3.8.8 1.2 1.9 1.2 3.2 0 4.7-2.8 5.7-5.5 6 .4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0012 .3z"/></svg>
+                </div>
+                <div class="author-info">
+                    <span class="label">GitHub</span>
+                    <a href="https://github.com/OBLADAET-ru" target="_blank" rel="noopener">OBLADAET-ru</a>
+                </div>
+            </div>
+            <div class="author-row">
+                <div class="author-icon">
+                    <svg viewBox="0 0 24 24"><path d="M12 12a5 5 0 100-10 5 5 0 000 10zm0 2c-4.4 0-8 2.7-8 6v2h16v-2c0-3.3-3.6-6-8-6z"/></svg>
+                </div>
+                <div class="author-info">
+                    <span class="label">Создатель</span>
+                    <span class="value">Платонов Виктор А.</span>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <main>
+        <!-- ГЛАВНАЯ -->
+        <section class="page active" id="home">
+            <div class="breadcrumbs">Главная</div>
+
+            <h1>База знаний <span class="accent">1С</span></h1>
+            <p class="subtitle">Структурированный справочник для разработчиков. От базовых принципов до настройки железа.</p>
+
+            <div class="para"><div class="para-num">0.1</div><h2>Что это за база знаний?</h2></div>
+            <p><strong>1Сbase</strong> — это открытый, структурированный учебник и справочник, созданный для программистов, которые работают с платформой <strong>1С:Предприятие 8.3+</strong>. Это не просто набор статей, а логически выстроенная система, которая проведёт вас от самых основ (понимания того, что такое платформа и метаданные) до глубоких архитектурных знаний (HighLoad, DevOps, работа с СУБД).</p>
+
+            <p>В базе собраны реальные практики разработки, проверенные на коммерческих проектах. Здесь нет «воды» и устаревших примеров из книг 2010 года. Только актуальный стек: 1C:EDT, Git, Vanessa Automation, SonarQube, RabbitMQ и современные подходы к оптимизации.</p>
+
+            <div class="para"><div class="para-num">0.2</div><h2>Для кого этот сайт?</h2></div>
+            <ul>
+                <li><strong>Для Junior-разработчиков:</strong> чтобы понять, как устроена платформа, выучить синтаксис, разобраться с формами и запросами, и не наделать фатальных ошибок на старте карьеры.</li>
+                <li><strong>Для Middle-специалистов:</strong> чтобы прокачать архитектурное мышление, научиться работать с блокировками, интеграциями и писать код, который выдержит нагрузку.</li>
+                <li><strong>Для Senior и Архитекторов:</strong> для шлифовки знаний в области CI/CD, анализа производительности (APDEX, Технологический журнал), проектирования отказоустойчивых кластеров и работы с HighLoad.</li>
+                <li><strong>Для студентов и стажеров:</strong> чтобы подготовиться к собеседованию, понять, какие вопросы задают на разных грейдах, и быстро найти нужную тему.</li>
+            </ul>
+
+            <div class="para"><div class="para-num">0.3</div><h2>Как устроен учебник?</h2></div>
+            <p>Вся информация разбита на логические блоки, чтобы вы могли изучать её последовательно или перескакивать к нужному разделу через удобный поиск.</p>
+
+            <div class="table-responsive">
+                <table>
+                    <tr>
+                        <th>Раздел</th>
+                        <th>Что внутри</th>
+                        <th>Уровень</th>
+                    </tr>
+                    <tr>
+                        <td><strong>§1 — §2. Основы и Ядро</strong></td>
+                        <td>Платформа, метаданные, объектная модель, запросы, СКД.</td>
+                        <td>Junior / база</td>
+                    </tr>
+                    <tr>
+                        <td><strong>§3 — §7. Архитектура и Грейды</strong></td>
+                        <td>Стандарты, СУБД, блокировки, DevOps, матрица компетенций.</td>
+                        <td>Junior → Middle</td>
+                    </tr>
+                    <tr>
+                        <td><strong>§8 — §11. Глубокий разбор</strong></td>
+                        <td>Инженерия СУБД, брокеры, HighLoad, APDEX, кластеры.</td>
+                        <td>Middle → Senior</td>
+                    </tr>
+                    <tr>
+                        <td><strong>§12 — §15. Практика</strong></td>
+                        <td>Формы, транзакции, паттерны проектирования, типовые конфигурации.</td>
+                        <td>Все уровни</td>
+                    </tr>
+                    <tr>
+                        <td><strong>§16 — §19. Справочник</strong></td>
+                        <td>Сниппеты (готовый код), глоссарий, вопросы с собеседований, релизы.</td>
+                        <td>Шпаргалка</td>
+                    </tr>
+                    <tr>
+                        <td><strong>§20. Инфраструктура</strong></td>
+                        <td>Настройка ПК, серверов СУБД и промышленных станков с ЧПУ.</td>
+                        <td>Инфраструктура</td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="callout info">
+                <div class="callout-icon">ℹ️</div>
+                <div><strong>Как пользоваться поиском:</strong> Введите в строку поиска вверху любую тему (например, «Дедлоки», «Транзакции», «Станки» или «1C:EDT») и нажмите на выпавший результат. Сайт мгновенно переключится на нужную главу.</div>
+            </div>
+
+            <div class="para"><div class="para-num">0.4</div><h2>Почему это важно?</h2></div>
+            <p>1С — это не просто «язык программирования». Это огромная экосистема, где код напрямую влияет на деньги, товары и бизнес-процессы. Плохо написанный запрос может «положить» сервер в самый разгар рабочего дня, а неверно настроенная транзакция — привести к потере данных. Эта база знаний создана для того, чтобы такие ситуации не происходили. Здесь собраны лучшие практики и стандарты, которые помогут вам стать настоящим профессионалом.</p>
+
+            <div class="cards-grid">
+                <a href="#skills-core" class="card-link" onclick="showPage('skills-core'); return false;">
+                    <h4>Ядро платформы</h4>
+                    <p>Объектная модель, язык запросов, СКД.</p>
+                </a>
+                <a href="#grades" class="card-link" onclick="showPage('grades'); return false;">
+                    <h4>Матрица компетенций</h4>
+                    <p>Требования к Junior, Middle, Senior.</p>
+                </a>
+                <a href="#infrastructure" class="card-link" onclick="showPage('infrastructure'); return false;">
+                    <h4>Железо и настройка</h4>
+                    <p>Серверы, ПК и станки с ЧПУ для 1С.</p>
+                </a>
+            </div>
+        </section>
+
+        <!-- §1 ОСНОВЫ -->
+        <section class="page" id="basics">
+            <div class="breadcrumbs">Главная / <span>§1 Основы</span></div>
+            <h1>§1. Основы платформы</h1>
+            <p class="subtitle">Архитектура, режимы работы и ключевые понятия</p>
+
+            <div class="para"><div class="para-num">1.1</div><h2>Что такое 1С:Предприятие</h2></div>
+            <p><strong>1С:Предприятие 8</strong> — это технологическая платформа, представляющая собой сложный программный комплекс для создания и эксплуатации прикладных решений (конфигураций) в области автоматизации бизнеса. Она предоставляет разработчику объектную модель, встроенный язык программирования, среду исполнения и инструменты администрирования. Сама по себе платформа не решает бухгалтерские или складские задачи, она является лишь «движком», на котором работают конфигурации (например, 1С:Бухгалтерия или 1С:ERP).</p>
+
+            <div class="callout info">
+                <div class="callout-icon">ℹ️</div>
+                <div><strong>Важно:</strong> Разработчик работает с <em>метаданными</em>, а платформа автоматически генерирует физические структуры базы данных. Вы не создаёте таблицы вручную (как в чистом SQL), вы описываете объекты (справочники, документы), а платформа делает всё остальное.</div>
+            </div>
+
+            <div class="para"><div class="para-num">1.2</div><h2>Два режима работы</h2></div>
+            <p>Платформа имеет два фундаментально разных режима работы:</p>
+            <ul>
+                <li><strong>Конфигуратор:</strong> Это среда разработки. В ней программист создаёт объекты, пишет код, проектирует формы, делает отладку и обновляет структуру базы данных (реструктуризация). Обычные пользователи в этот режим не заходят.</li>
+                <li><strong>Предприятие:</strong> Это пользовательский режим (рабочее место). В нем бухгалтеры, менеджеры и складские работники вводят документы, смотрят отчёты и выполняют свои ежедневные задачи.</li>
+            </ul>
+        </section>
+
+        <!-- §2 ЯДРО -->
+        <section class="page" id="skills-core">
+            <div class="breadcrumbs">Главная / <span>§2 Ядро</span></div>
+            <h1>§2. Ядро платформы</h1>
+            <p class="subtitle">Фундамент, без которого невозможно написать ни одну грамотную строчку кода</p>
+
+            <div class="para"><div class="para-num">2.1</div><h2>Объектная модель</h2></div>
+            <p>Четкое понимание назначения и поведения объектов метаданных — это база. <strong>Справочники</strong> хранят условно-постоянную информацию (список товаров, контрагентов). <strong>Документы</strong> фиксируют факты хозяйственной деятельности (продажа, покупка) и создают движения по регистрам. <strong>Регистры сведений</strong> хранят данные в разрезе измерений (например, цены товаров на определенную дату), а <strong>Регистры накопления</strong> хранят остатки и обороты (сколько товара на складе). <strong>Планы видов характеристик</strong> позволяют создавать бесконечные свойства для объектов (цвет, размер).</p>
+
+            <div class="para"><div class="para-num">2.2</div><h2>Язык запросов 1С</h2></div>
+            <p>Запросы — это главный инструмент получения данных. В отличие от обычного чтения объектов через точку (что вызывает много запросов к СУБД), язык запросов позволяет получить все данные одним пакетом. Важно уметь проектировать сложные запросы, использовать <strong>виртуальные таблицы</strong> (Остатки, Обороты) и <strong>временные таблицы</strong> (для оптимизации), а также правильно соединять таблицы, чтобы не получить декартово произведение.</p>
+
+            <div class="para"><div class="para-num">2.3</div><h2>Система компоновки данных (СКД)</h2></div>
+            <p>СКД — это мощнейший механизм, позволяющий создавать отчеты любой сложности без единой строчки кода. Разработчик описывает набор данных (запрос), настраивает ресурсы (то, что суммируем) и группировки, а пользователь может сам менять внешний вид отчета (менять колонки, фильтры, сортировки) прямо в режиме «Предприятие».</p>
+        </section>
+
+        <!-- §3 АРХИТЕКТУРА -->
+        <section class="page" id="skills-arch">
+            <div class="breadcrumbs">Главная / <span>§3 Архитектура</span></div>
+            <h1>§3. Архитектура и СУБД</h1>
+            <p class="subtitle">Знания, отличающие Senior-разработчика от Junior-специалиста</p>
+
+            <div class="para"><div class="para-num">3.1</div><h2>Стандарты разработки</h2></div>
+            <p>Фирма «1С» выпустила официальные стандарты разработки. Это не просто рекомендации, а правила, которые позволяют разным программистам понимать код друг друга. Сюда входит правильное именование переменных, отсутствие дублирования кода, грамотная обработка ошибок и разделение клиентского и серверного кода.</p>
+
+            <div class="para"><div class="para-num">3.2</div><h2>Работа с СУБД</h2></div>
+            <p>1С — это лишь прослойка (ORM), которая переводит объекты в SQL-запросы. Senior понимает, как 1С хранит данные в MS SQL или PostgreSQL, как работают индексы и почему запрос с подзапросом в цикле может «положить» сервер. Он умеет читать планы запросов СУБД.</p>
+
+            <div class="para"><div class="para-num">3.3</div><h2>Управление блокировками</h2></div>
+            <p>При одновременной работе сотен пользователей возникают конфликты доступа. Разработчик должен уметь работать с объектными и управляемыми блокировками, знать уровни изоляции транзакций и уметь предотвращать дедлоки (взаимные блокировки), когда два пользователя блокируют данные друг друга.</p>
+        </section>
+
+        <!-- §4 DEVOPS -->
+        <section class="page" id="skills-devops">
+            <div class="breadcrumbs">Главная / <span>§4 DevOps</span></div>
+            <h1>§4. DevOps и CI/CD</h1>
+            <p class="subtitle">Современные инструменты и интеграция</p>
+
+            <div class="para"><div class="para-num">4.1</div><h2>Протоколы обмена</h2></div>
+            <p>1С редко работает в вакууме. Она должна обмениваться данными с сайтами, CRM и банками. Для этого используются форматы XML, JSON и протокол HTTP. Современный разработчик умеет не только потреблять чужие REST-сервисы, но и создавать собственные Web- и HTTP-сервисы внутри 1С.</p>
+
+            <div class="para"><div class="para-num">4.2</div><h2>1C:EDT и Git</h2></div>
+            <p>Старый «Конфигуратор» уходит в прошлое. Новая среда <strong>1C:EDT</strong> (на базе Eclipse) позволяет хранить код в виде обычных текстовых файлов, что даёт возможность использовать классический Git (ветки, коммиты, пулл-реквесты) и командную разработку.</p>
+
+            <div class="para"><div class="para-num">4.3</div><h2>Расширения</h2></div>
+            <p>Раньше типовые конфигурации приходилось «снимать с поддержки», чтобы доработать, что ломало будущие обновления. Теперь используются расширения. Разработчик может добавлять свои формы, реквизиты и перехватывать методы типовой конфигурации, не меняя её код.</p>
+        </section>
+
+        <!-- §5 БИЗНЕС-ЛОГИКА -->
+        <section class="page" id="skills-domain">
+            <div class="breadcrumbs">Главная / <span>§5 Бизнес-логика</span></div>
+            <h1>§5. Предметные области</h1>
+            <p class="subtitle">Код в 1С всегда автоматизирует реальные деньги, товары или процессы</p>
+
+            <div class="para"><div class="para-num">5.1</div><h2>БСП (Библиотека стандартных подсистем)</h2></div>
+            <p>Это набор готовых модулей от 1С, которые реализуют типовые задачи: присоединенные файлы, контактную информацию, версионирование объектов, варианты отчетов, печать. Хороший разработчик не пишет эти блоки с нуля («велосипеды»), а использует БСП.</p>
+
+            <div class="para"><div class="para-num">5.2</div><h2>Знание конфигураций</h2></div>
+            <p>На рынке ценятся специалисты, которые понимают не только синтаксис, но и логику работы конкретных конфигураций: <strong>1С:ERP</strong> (сложное производство и логистика), <strong>1С:Бухгалтерия</strong> (план счетов, регламентированная отчетность), <strong>1С:ЗУП</strong> (расчет зарплаты, кадровый учет).</p>
+
+            <div class="para"><div class="para-num">5.3</div><h2>Учетные процессы</h2></div>
+            <p>Чтобы программировать склад, нужно понимать, что такое FIFO/LIFO, партионный учет и адресное хранение. Чтобы программировать бухгалтерию — знать, что такое двойная запись и себестоимость. Без знания предметной области код будет формально верным, но бесполезным для бизнеса.</p>
+        </section>
+
+        <!-- §6 SOFT SKILLS -->
+        <section class="page" id="skills-soft">
+            <div class="breadcrumbs">Главная / <span>§6 Soft Skills</span></div>
+            <h1>§6. Soft Skills</h1>
+            <p class="subtitle">Разработчик 1С напрямую влияет на реальный бизнес</p>
+
+            <div class="para"><div class="para-num">6.1</div><h2>Архитектурное мышление</h2></div>
+            <p>Умение проектировать систему «на вырост». Сегодня у компании 10 пользователей, а завтра — 100. Плохой код, завязанный на жесткие ограничения, через год придется переписывать полностью.</p>
+
+            <div class="para"><div class="para-num">6.2</div><h2>Язык бизнеса</h2></div>
+            <p>Заказчик не понимает слов «регистр» или «транзакция». Он говорит «маржа», «себестоимость», «остатки». Разработчик должен уметь переводить технические термины на язык бизнеса и обратно, чтобы правильно понять задачу.</p>
+
+            <div class="para"><div class="para-num">6.3</div><h2>Управление ожиданиями</h2></div>
+            <p>Часто заказчик просит «сделать кнопку», которая на самом деле требует переписывания половины системы. Хороший разработчик умеет вовремя сказать «нет» избыточному и неоптимальному ТЗ и предложить альтернативное решение на базе типового функционала.</p>
+        </section>
+
+        <!-- §7 ГРЕЙДЫ -->
+        <section class="page" id="grades">
+            <div class="breadcrumbs">Главная / <span>§7 Грейды</span></div>
+            <h1>§7. Матрица компетенций</h1>
+            <p class="subtitle">Требования к специалисту на каждом этапе</p>
+
+            <div class="table-responsive">
+                <table>
+                    <tr>
+                        <th>Область</th>
+                        <th>Junior</th>
+                        <th>Middle</th>
+                        <th>Senior</th>
+                        <th>Architect</th>
+                    </tr>
+                    <tr>
+                        <td><strong>Кодинг и Платформа</strong></td>
+                        <td>Знает синтаксис, создает простые формы, нарушает стандарты 1С.</td>
+                        <td>Пишет чистый код, использует БСП, разделяет контексты Клиент/Сервер.</td>
+                        <td>Проектирует сложные подсистемы, пишет оптимальный код под HighLoad.</td>
+                        <td>Формирует стандарты разработки, закладывает отказоустойчивую архитектуру.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>СУБД</strong></td>
+                        <td>Не задумывается о работе СУБД. Пишет запросы с подзапросами.</td>
+                        <td>Понимает структуру таблиц, умеет индексировать, избегает запросов в циклах.</td>
+                        <td>Читает планы запросов, оптимизирует индексы, устраняет дедлоки.</td>
+                        <td>Проектирует БД под терабайты данных, настраивает шардинг.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Интеграция</strong></td>
+                        <td>Умеет настраивать типовой обмен (КД 2.0 / 3.0).</td>
+                        <td>Пишет HTTP/Web-сервисы, парсит JSON/XML.</td>
+                        <td>Строит асинхронный обмен (RabbitMQ, Kafka), знает веб-сокеты.</td>
+                        <td>Проектирует корпоративную шину данных (ESB) и весь ИТ-ландшафт.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>DevOps</strong></td>
+                        <td>Работает только в Конфигураторе. Слышал про Git.</td>
+                        <td>1C:EDT, Git, простые тесты в Vanessa.</td>
+                        <td>SonarQube, CI/CD пайплайны, автотесты.</td>
+                        <td>Выстраивает культуру автоматического тестирования и деплоя.</td>
+                    </tr>
+                </table>
+            </div>
+        </section>
+
+        <!-- §8 СУБД -->
+        <section class="page" id="deep-sql">
+            <div class="breadcrumbs">Главная / <span>§8 СУБД</span></div>
+            <h1>§8. Инженерия СУБД</h1>
+            <p class="subtitle">Высококлассный разработчик понимает, что платформа — это лишь ORM</p>
+
+            <div class="para"><div class="para-num">8.1</div><h2>Трансляция типов данных</h2></div>
+            <p>Составные типы (например, «ДокументСсылка.РеализацияТоваров» или «СправочникСсылка.Номенклатура» в одном поле) в SQL превращаются в несколько колонок: поле для самой ссылки и поле для типа. Это сильно замедляет выборку, если не уметь этим пользоваться.</p>
+
+            <div class="para"><div class="para-num">8.2</div><h2>Механизм итогов регистров</h2></div>
+            <p>Чтобы не считать остатки каждый раз с нуля, 1С хранит таблицу итогов. Если запросить остатки на «актуальную» дату, платформа возьмет готовые цифры. Если на «прошлую» — ей придется вычислять движения обратно. Понимание этого механизма критично для оптимизации.</p>
+
+            <div class="para"><div class="para-num">8.3</div><h2>Управляемые блокировки</h2></div>
+            <p>Уровни изоляции транзакций (Read Committed, Repeatable Read). Умение явно управлять блокировками в коде для предотвращения избыточного блокирования таблиц другими пользователями.</p>
+        </section>
+
+        <!-- §9 ИНТЕГРАЦИЯ -->
+        <section class="page" id="deep-integration">
+            <div class="breadcrumbs">Главная / <span>§9 Интеграция</span></div>
+            <h1>§9. Корпоративный ландшафт</h1>
+            <p class="subtitle">1С обязана мгновенно синхронизироваться с другими системами</p>
+
+            <div class="para"><div class="para-num">9.1</div><h2>OData и REST</h2></div>
+            <p>Встроенный в 1С механизм автоматического REST-сервиса (OData) позволяет внешним системам (например, мобильному приложению) напрямую читать и записывать данные в 1С без сложного программирования обмена.</p>
+
+            <div class="para"><div class="para-num">9.2</div><h2>Брокеры сообщений</h2></div>
+            <p>Вместо прямых HTTP-запросов, которые могут «упасть» при недоступности сети, 1С отправляет пакет данных в RabbitMQ или Kafka. Внешняя система забирает его оттуда по мере готовности. Это принцип Publish-Subscribe для надежного обмена.</p>
+
+            <div class="para"><div class="para-num">9.3</div><h2>Большие бинарные данные</h2></div>
+            <p>Хранение тяжелых сканов и картинок внутри базы 1С раздувает файл и замедляет работу. Правильно — выносить их во внешние S3-хранилища (MinIO, Yandex Cloud), а в 1С хранить только ссылки.</p>
+        </section>
+
+        <!-- §10 DEVOPS-СТЕК -->
+        <section class="page" id="deep-devops">
+            <div class="breadcrumbs">Главная / <span>§10 DevOps-стек</span></div>
+            <h1>§10. DevOps-инструменты</h1>
+            <p class="subtitle">Эпоха ручного обновления баз уходит в прошлое</p>
+
+            <div class="para"><div class="para-num">10.1</div><h2>Vanessa Automation (BDD)</h2></div>
+            <p>Инструмент для сценарного тестирования. Вы пишете сценарий на понятном языке («Если я нажимаю кнопку Провести, то статус должен стать Проведен»), а робот сам открывает 1С, кликает по кнопкам и проверяет результат, исключая человеческий фактор.</p>
+
+            <div class="para"><div class="para-num">10.2</div><h2>OneScript</h2></div>
+            <p>Консольный движок, позволяющий выполнять скрипты на языке 1С вне самой платформы. Идеально подходит для написания утилит, автоматизирующих сборку мусора, архивацию баз и выгрузку конфигураций по расписанию.</p>
+
+            <div class="para"><div class="para-num">10.3</div><h2>SonarQube</h2></div>
+            <p>Статический анализатор кода. С помощью плагина Sonar-1C-BSL он проверяет кодовую базу на соответствие стандартам 1С, находит потенциальные баги и уязвимости еще до того, как код попадет в релиз.</p>
+        </section>
+
+        <!-- §11 HIGHLOAD -->
+        <section class="page" id="deep-highload">
+            <div class="breadcrumbs">Главная / <span>§11 HighLoad</span></div>
+            <h1>§11. Анализ и HighLoad</h1>
+            <p class="subtitle">Когда система «тормозит», Senior использует научные методики</p>
+
+            <div class="para"><div class="para-num">11.1</div><h2>APDEX</h2></div>
+            <p>Международный стандарт замера производительности. Вы замеряете время выполнения ключевых операций (например, проведение заказа), собираете статистику и переводите её в оценку качества (Отлично, Хорошо, Плохо).</p>
+
+            <div class="para"><div class="para-num">11.2</div><h2>Парсинг Технологического журнала (ТЖ)</h2></div>
+            <p>ТЖ — это лог платформы 1С. Умение настроить его и с помощью регулярных выражений вычленить из гигабайтов данных конкретный SQL-запрос, который выполнялся дольше 10 секунд — ключевой навык.</p>
+
+            <div class="para"><div class="para-num">11.3</div><h2>Кластер 1С</h2></div>
+            <p>Настройка рабочих серверов, отказоустойчивых кластеров, распределение требований к функциональности, управление сеансами и процессами (rmngr, rphost).</p>
+        </section>
+
+        <!-- §12 ФОРМЫ -->
+        <section class="page" id="practice-forms">
+            <div class="breadcrumbs">Главная / <span>§12 Формы</span></div>
+            <h1>§12. Управляемые формы</h1>
+            <p class="subtitle">Глубокий разбор взаимодействия с интерфейсом</p>
+
+            <div class="para"><div class="para-num">12.1</div><h2>Архитектура</h2></div>
+            <p>Форма создается на сервере, а затем выводится на клиент. Директивы <code>&НаКлиенте</code> и <code>&НаСервере</code> определяют контекст. Код на клиенте выполняется быстро, но не имеет доступа к БД. Код на сервере имеет доступ ко всему, но требует времени на передачу данных.</p>
+
+            <div class="para"><div class="para-num">12.2</div><h2>События</h2></div>
+            <p>Классический пример обработки события <code>ПриИзменении</code> для поля табличной части — автоматический пересчет суммы при изменении количества:</p>
+            <pre><code>&НаКлиенте
+<span class="kw">Процедура</span> <span class="fn">МатериалыКоличествоПриИзменении</span>(Элемент)
+    Строка = Элементы.Материалы.ТекущиеДанные;
+    Строка.Сумма = Строка.Количество * Строка.Цена;
+<span class="kw">КонецПроцедуры</span></code></pre>
+        </section>
+
+        <!-- §13 ТРАНЗАКЦИИ -->
+        <section class="page" id="practice-transactions">
+            <div class="breadcrumbs">Главная / <span>§13 Транзакции</span></div>
+            <h1>§13. Транзакции</h1>
+            <p class="subtitle">Целостность данных при конкурентном доступе</p>
+
+            <div class="para"><div class="para-num">13.1</div><h2>Явная транзакция</h2></div>
+            <p>Если нужно выполнить несколько операций записи атомарно (все или ничего), используется явная транзакция:</p>
+            <pre><code><span class="kw">НачатьТранзакцию</span>();
+<span class="kw">Попытка</span>
+    Документ.Записать();
+    <span class="kw">ЗафиксироватьТранзакцию</span>();
+<span class="kw">Исключение</span>
+    <span class="kw">ОтменитьТранзакцию</span>();
+<span class="kw">КонецПопытки</span>;</code></pre>
+
+            <div class="para"><div class="para-num">13.2</div><h2>Блокировки</h2></div>
+            <p>Для предотвращения дедлоков используются управляемые блокировки. Данные блокируются перед чтением, чтобы другие сеансы не могли их изменить.</p>
+            <pre><code>Блокировка = <span class="kw">Новый</span> БлокировкаДанных;
+Элемент = Блокировка.Добавить(<span class="str">"Справочник.Номенклатура"</span>);
+Блокировка.Заблокировать();</code></pre>
+        </section>
+
+        <!-- §14 ПАТТЕРНЫ -->
+        <section class="page" id="practice-patterns">
+            <div class="breadcrumbs">Главная / <span>§14 Паттерны</span></div>
+            <h1>§14. Паттерны</h1>
+            <p class="subtitle">Архитектурные решения для чистого кода</p>
+
+            <div class="para"><div class="para-num">14.1</div><h2>GRASP</h2></div>
+            <p><strong>Information Expert:</strong> Обязанность должна быть у того объекта, который владеет данными. Например, расчет стоимости товара должен быть в модуле документа, а не в общем модуле.</p>
+            <p><strong>Controller:</strong> Координация сценария использования. В 1С эту роль выполняют общие модули, которые управляют последовательностью вызовов.</p>
+
+            <div class="para"><div class="para-num">14.2</div><h2>Обработка ошибок</h2></div>
+            <p>Правильная обработка исключений должна не только предотвращать падение, но и записывать информацию в журнал регистрации для последующего анализа.</p>
+            <pre><code><span class="kw">Попытка</span>
+    ВыполнитьОперацию();
+<span class="kw">Исключение</span>
+    ЗаписьЖурналаРегистрации(<span class="str">"Ошибка"</span>, , , , ОписаниеОшибки());
+<span class="kw">КонецПопытки</span>;</code></pre>
+        </section>
+
+        <!-- §15 ТИПОВЫЕ -->
+        <section class="page" id="practice-typical">
+            <div class="breadcrumbs">Главная / <span>§15 Конфигурации</span></div>
+            <h1>§15. Типовые конфигурации</h1>
+            <p class="subtitle">Разработчик развивает существующие системы</p>
+
+            <div class="para"><div class="para-num">15.1</div><h2>БСП</h2></div>
+            <p>Использование готовых блоков (файлы, контакты, версионирование) вместо «велосипедов».</p>
+
+            <div class="para"><div class="para-num">15.2</div><h2>Прикладные решения</h2></div>
+            <p>Понимание логики работы хотя бы одной-двух ключевых конфигураций:</p>
+            <ul>
+                <li><strong>1С:ERP / Комплексная автоматизация:</strong> Производство, логистика, финансы.</li>
+                <li><strong>1С:Бухгалтерия:</strong> План счетов, регламентированная отчетность, НДС.</li>
+                <li><strong>1С:ЗУП:</strong> Расчет зарплаты, кадровый учет, воинский учет.</li>
+                <li><strong>1С:УНФ:</strong> Управление небольшой фирмой, быстрый старт.</li>
+            </ul>
+        </section>
+
+        <!-- §16 СНИППЕТЫ -->
+        <section class="page" id="snippets">
+            <div class="breadcrumbs">Главная / <span>§16 Сниппеты</span></div>
+            <h1>§16. Сниппеты и типовые приёмы</h1>
+            <p class="subtitle">Готовые куски кода для частых задач</p>
+
+            <div class="para"><div class="para-num">16.1</div><h2>Поиск и создание элементов</h2></div>
+            <pre><code><span class="cmt">// Найти по наименованию</span>
+Ссылка = Справочники.Контрагенты.НайтиПоНаименованию(<span class="str">"ООО Ромашка"</span>, Истина);
+
+<span class="cmt">// Создать новый элемент</span>
+Новый = Справочники.Номенклатура.СоздатьЭлемент();
+Новый.Наименование = <span class="str">"Новый товар"</span>;
+Новый.Записать();</code></pre>
+
+            <div class="para"><div class="para-num">16.2</div><h2>Работа со строками</h2></div>
+            <pre><code><span class="cmt">// Разбор строки</span>
+Части = СтрРазделить(<span class="str">"a,b,c,d"</span>, <span class="str">","</span>);
+
+<span class="cmt">// Объединение</span>
+Объединено = СтрСоединить(Части, <span class="str">"-"</span>); <span class="cmt">// "a-b-c-d"</span>
+
+<span class="cmt">// Форматирование числа</span>
+Формат = <span class="kw">Новый</span> Формат(<span class="str">"ЧЦ=15; ЧДЦ=2; ЧН=0,00; ЧРД=,"</span>);
+Строка = Формат(Сумма, Формат); <span class="cmt">// 1 234,56</span></code></pre>
+
+            <div class="para"><div class="para-num">16.3</div><h2>Работа с датами</h2></div>
+            <pre><code>ТекущаяДата = ТекущаяДата();
+НачалоДня = НачалоДня(ТекущаяДата());
+КонецМесяца = КонецМесяца(ТекущаяДата());
+Разница = РазностьДат(Дата1, Дата2, <span class="str">"День"</span>);</code></pre>
+        </section>
+
+        <!-- §17 ГЛОССАРИЙ -->
+        <section class="page" id="glossary">
+            <div class="breadcrumbs">Главная / <span>§17 Глоссарий</span></div>
+            <h1>§17. Глоссарий</h1>
+            <p class="subtitle">Термины и определения</p>
+
+            <div class="table-responsive">
+                <table>
+                    <tr><th>Термин</th><th>Определение</th></tr>
+                    <tr><td><strong>Платформа</strong></td><td>Технологическая основа 1С:Предприятие, предоставляющая среду разработки и исполнения</td></tr>
+                    <tr><td><strong>Конфигурация</strong></td><td>Прикладное решение, разработанное на платформе (например, Бухгалтерия)</td></tr>
+                    <tr><td><strong>Метаданные</strong></td><td>Описание объектов конфигурации в дереве конфигуратора</td></tr>
+                    <tr><td><strong>Ссылка</strong></td><td>Уникальный идентификатор объекта в базе данных (GUID)</td></tr>
+                    <tr><td><strong>Реквизит</strong></td><td>Свойство объекта метаданных или формы</td></tr>
+                    <tr><td><strong>Табличная часть</strong></td><td>Структурированный набор данных (строк), принадлежащий объекту</td></tr>
+                    <tr><td><strong>Регистр</strong></td><td>Объект для хранения и обработки данных в разрезе измерений</td></tr>
+                    <tr><td><strong>СКД</strong></td><td>Система компоновки данных — механизм построения отчётов</td></tr>
+                    <tr><td><strong>Тонкий клиент</strong></td><td>Клиентское приложение, работающее с сервером через канал связи</td></tr>
+                    <tr><td><strong>Веб-клиент</strong></td><td>Клиент, работающий в браузере без установки на ПК</td></tr>
+                    <tr><td><strong>Технологический журнал</strong></td><td>Лог платформы для анализа производительности и ошибок</td></tr>
+                </table>
+            </div>
+        </section>
+
+        <!-- §18 СОБЕСЕДОВАНИЕ -->
+        <section class="page" id="interview">
+            <div class="breadcrumbs">Главная / <span>§18 Собеседование</span></div>
+            <h1>§18. Вопросы на собеседовании</h1>
+            <p class="subtitle">Что спрашивают на позиции Junior, Middle и Senior</p>
+
+            <div class="para"><div class="para-num">18.1</div><h2>Junior</h2></div>
+            <ul>
+                <li>Чем отличается документ от справочника и зачем нужны регистры?</li>
+                <li>Что такое виртуальная таблица регистра (Остатки, Обороты)?</li>
+                <li>Как работает разделение контекстов (Клиент/Сервер) и почему нельзя обращаться к БД с клиента?</li>
+                <li>Что такое транзакция и зачем она нужна?</li>
+            </ul>
+
+            <div class="para"><div class="para-num">18.2</div><h2>Middle</h2></div>
+            <ul>
+                <li>Как найти дедлок и как его предотвратить?</li>
+                <li>В чем разница между объектными и управляемыми блокировками?</li>
+                <li>Как оптимизировать запрос с подзапросом?</li>
+                <li>Что такое БСП и какие модули вы использовали?</li>
+            </ul>
+
+            <div class="para"><div class="para-num">18.3</div><h2>Senior</h2></div>
+            <ul>
+                <li>Как спроектировать отказоустойчивый кластер 1С?</li>
+                <li>Как работает механизм итогов регистров на уровне СУБД?</li>
+                <li>Опишите процесс настройки CI/CD для 1С.</li>
+                <li>Как вы анализируете технологический журнал?</li>
+            </ul>
+        </section>
+
+        <!-- §19 РЕЛИЗЫ -->
+        <section class="page" id="release">
+            <div class="breadcrumbs">Главная / <span>§19 Релизы</span></div>
+            <h1>§19. Сборка и релизы</h1>
+            <p class="subtitle">Как правильно готовить обновления и выкатывать их без ошибок</p>
+
+            <div class="para"><div class="para-num">19.1</div><h2>Подготовка релиза</h2></div>
+            <p>Перед релизом необходимо:</p>
+            <ul>
+                <li>Провести Code Review всех изменений.</li>
+                <li>Прогнать автотесты (Vanessa Automation).</li>
+                <li>Сделать резервную копию базы данных.</li>
+                <li>Проверить обновление на тестовом контуре.</li>
+            </ul>
+
+            <div class="para"><div class="para-num">19.2</div><h2>Автоматизация</h2></div>
+            <p>Для автоматизации сборки и доставки релизов используется OneScript и CI/CD пайплайны (GitLab CI / Jenkins). Это позволяет минимизировать человеческий фактор.</p>
+
+            <div class="callout warn">
+                <div class="callout-icon">⚠️</div>
+                <div><strong>Важно:</strong> Никогда не выкатывайте релиз в пятницу вечером без возможности быстрого отката (Rollback).</div>
+            </div>
+        </section>
+
+        <!-- §20 ИНФРАСТРУКТУРА И ЖЕЛЕЗО -->
+        <section class="page" id="infrastructure">
+            <div class="breadcrumbs">Главная / <span>§20 Инфраструктура</span></div>
+            <h1>§20. Инфраструктура и настройка</h1>
+            <p class="subtitle">Железо, серверы и промышленное оборудование для 1С</p>
+
+            <div class="para"><div class="para-num">20.1</div><h2>Рабочие станции (ПК пользователей)</h2></div>
+            <p>Для клиентских мест (тонкий клиент) не требуется мощное железо. Главное — стабильный интернет и достаточный объем ОЗУ. Для работы в режиме «Толстый клиент» (или Конфигуратор) требуются более мощные ПК:</p>
+            <ul>
+                <li><strong>Процессор:</strong> 4-ядерный (Intel Core i3/i5 или AMD Ryzen 3/5). Для разработчика лучше i7/Ryzen 7.</li>
+                <li><strong>ОЗУ:</strong> Минимум 8 ГБ (рекомендуется 16 ГБ).</li>
+                <li><strong>Диск:</strong> SSD NVMe (быстрая загрузка и компиляция).</li>
+                <li><strong>ОС:</strong> Windows 10/11 (Pro), либо любой Linux (Astra, Alt) для тонкого клиента.</li>
+            </ul>
+
+            <div class="para"><div class="para-num">20.2</div><h2>Серверы баз данных и приложений</h2></div>
+            <p>Сервер 1С — это «сердце» системы. Для отказоустойчивости используется кластер. Требования к серверу СУБД (MS SQL / PostgreSQL) крайне высоки:</p>
+            <div class="table-responsive">
+                <table>
+                    <tr><th>Компонент</th><th>Требования</th><th>Рекомендация</th></tr>
+                    <tr><td><strong>Процессор</strong></td><td>Много ядер, высокая тактовая частота</td><td>Intel Xeon Silver/Gold или AMD EPYC (16+ ядер)</td></tr>
+                    <tr><td><strong>ОЗУ</strong></td><td>Быстрая память с ECC</td><td>От 64 ГБ до нескольких ТБ (в зависимости от нагрузки)</td></tr>
+                    <tr><td><strong>Диски</strong></td><td>Высокая скорость IOPS</td><td>Только NVMe SSD в RAID 10 (никаких HDD)</td></tr>
+                    <tr><td><strong>Сеть</strong></td><td>Стабильный канал между сервером 1С и СУБД</td><td>10 Гбит/с (10GbE)</td></tr>
+                </table>
+            </div>
+
+            <div class="para"><div class="para-num">20.3</div><h2>Промышленное оборудование (Станки с ЧПУ)</h2></div>
+            <p>Интеграция 1С с производством. Если предприятие использует станки с ЧПУ, 1С может управлять ими через OPC UA или прямые API. Настройка включает:</p>
+            <ul>
+                <li><strong>Промышленные ПК (IPC):</strong> Устанавливаются в цеху, имеют защиту от пыли/влаги (IP65).</li>
+                <li><strong>Интеграция:</strong> Станок передает данные о выработке, браке и простоях напрямую в 1С:ERP, формируя фактические данные для расчета зарплаты и себестоимости.</li>
+                <li><strong>Сеть:</strong> На производстве используется промышленный Ethernet (Profinet, EtherCAT) с защитой от помех.</li>
+            </ul>
+
+            <div class="callout tip">
+                <div class="callout-icon">💡</div>
+                <div><strong>Совет:</strong> Всегда отделяйте сервер баз данных от сервера приложений 1С. Это повышает безопасность и позволяет масштабировать систему горизонтально при росте нагрузки.</div>
+            </div>
+        </section>
+
+    </main>
+</div>
+
+<script>
+    document.querySelectorAll('[data-page]').forEach(el => {
+        el.addEventListener('click', e => {
+            e.preventDefault();
+            showPage(el.dataset.page);
+        });
+    });
+
+    function showPage(pageId) {
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        const page = document.getElementById(pageId);
+        if (page) {
+            page.classList.add('active');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+        document.querySelectorAll('.nav-link').forEach(l => {
+            l.classList.toggle('active', l.dataset.page === pageId);
+        });
+        if (window.innerWidth <= 900) {
+            document.getElementById('sidebar').classList.remove('open');
+        }
+    }
+
+    function toggleSidebar() {
+        document.getElementById('sidebar').classList.toggle('open');
+    }
+
+    // ПОИСК
+    const searchData = [];
+    document.querySelectorAll('.page').forEach(page => {
+        const pageId = page.id;
+        const pageTitle = page.querySelector('h1') ? page.querySelector('h1').innerText : 'Без названия';
+
+        page.querySelectorAll('h2').forEach((h2) => {
+            let nextEl = h2.closest('.para') ? h2.closest('.para').nextElementSibling : null;
+            let desc = '';
+            if (nextEl && nextEl.tagName === 'P') {
+                desc = nextEl.innerText;
+            } else if (nextEl && nextEl.tagName === 'DIV') {
+                desc = nextEl.innerText;
+            }
+            searchData.push({
+                id: pageId,
+                chapter: pageTitle,
+                title: h2.innerText,
+                desc: desc.substring(0, 100) + (desc.length > 100 ? '...' : '')
+            });
+        });
+
+        if (page.querySelector('h1')) {
+            searchData.push({
+                id: pageId,
+                chapter: 'Раздел',
+                title: pageTitle,
+                desc: 'Перейти к разделу...'
+            });
+        }
+    });
+
+    const searchInput = document.getElementById('searchInput');
+    const searchResults = document.getElementById('searchResults');
+
+    searchInput.addEventListener('input', function() {
+        const query = this.value.trim().toLowerCase();
+
+        if (query.length < 2) {
+            searchResults.classList.remove('active');
+            return;
+        }
+
+        const matches = searchData.filter(item =>
+            item.title.toLowerCase().includes(query) ||
+            item.desc.toLowerCase().includes(query) ||
+            item.chapter.toLowerCase().includes(query)
+        ).slice(0, 8);
+
+        if (matches.length > 0) {
+            searchResults.innerHTML = matches.map(item => `
+                    <div class="search-item" onclick="goToSearchResult('${item.id}')">
+                        <span class="s-chapter">${item.chapter}</span>
+                        <span class="s-title">${item.title}</span>
+                        <span class="s-desc">${item.desc}</span>
+                    </div>
+                `).join('');
+            searchResults.classList.add('active');
+        } else {
+            searchResults.innerHTML = `<div class="search-item"><span class="s-desc">Ничего не найдено</span></div>`;
+            searchResults.classList.add('active');
+        }
+    });
+
+    function goToSearchResult(pageId) {
+        searchInput.value = '';
+        searchResults.classList.remove('active');
+        showPage(pageId);
+    }
+
+    document.addEventListener('click', function(e) {
+        if (!e.target.closest('.search-container')) {
+            searchResults.classList.remove('active');
+        }
+    });
+
+    searchInput.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            this.value = '';
+            searchResults.classList.remove('active');
+        }
+    });
+</script>
+</body>
+</html>
+```
